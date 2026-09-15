@@ -34,7 +34,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=3c74b3bc" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=9c3e77be" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css?v=8cd3d715" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -64,6 +64,7 @@
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="EDA - Predicción de insolvencia financiera (SIIS / Supersociedades)" href="EDA_Insolvencia_SIIS.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -192,8 +193,14 @@
   
   
   
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Riesgo de Insolvencia Financiera SIIS - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Riesgo de Insolvencia Financiera SIIS - Home"/>
   
-    <p class="title logo__title">Riesgo de Insolvencia Financiera SIIS</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -213,7 +220,11 @@
                 </a>
             </li>
         </ul>
-        
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="EDA_Insolvencia_SIIS.html">EDA - Predicción de insolvencia financiera (SIIS / Supersociedades)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="referencias.html">Referencias</a></li>
+</ul>
+
     </div>
 </nav></div>
     </div>
@@ -379,11 +390,12 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="introduccion">
 <h1>1 Introducción<a class="headerlink" href="#introduccion" title="Link to this heading">#</a></h1>
+<p><img alt="Logo" src="_images/logo.png" /></p>
 <section id="contexto-del-problema">
 <h2>1.1 Contexto del Problema<a class="headerlink" href="#contexto-del-problema" title="Link to this heading">#</a></h2>
-<p>Un indicador financiero aislado —una cifra de rentabilidad, un margen o una razón de liquidez— carece de valor explicativo por sí mismo; su utilidad surge únicamente cuando se convierte en insumo para anticipar un evento concreto. En el campo de las finanzas corporativas, el evento con mayor respaldo académico es el de la insolvencia financiera (<em>financial distress</em>), cuya manifestación más severa es la insolvencia o quiebra empresarial. Este fenómeno no ocurre de un día para otro: desde los trabajos pioneros de Beaver (1966), la literatura ha documentado que el deterioro se manifiesta con antelación en el comportamiento de las razones de rentabilidad, liquidez y endeudamiento, mucho antes de que la empresa incumpla formalmente sus obligaciones.</p>
-<p>Como demostró Altman (1968), que superó las limitaciones del análisis univariado de Beaver mediante el desarrollo del <em>Z-Score</em> con análisis discriminante múltiple, combinar varios indicadores financieros en un único modelo multivariado permite estimar con mayor precisión la probabilidad de quiebra empresarial. Poco después, Ohlson (1980) incorporó los modelos probabilísticos al campo mediante regresión logística, superando algunos de los supuestos estadísticos restrictivos del análisis discriminante. Estos dos trabajos sentaron las bases metodológicas que, décadas después, permitirían el salto hacia el aprendizaje automático.</p>
-<p>Ese salto lo marcó Barboza, Kimura y Altman (2017), quienes compararon distintas técnicas de machine learning —random forest, bagging, boosting, redes neuronales y support vector machines— frente a los métodos estadísticos tradicionales, mostrando que los modelos de ensamble superaban de forma consistente a los métodos clásicos. En el contexto colombiano, sin embargo, este tipo de estudios sigue siendo escaso: Correa-Mejía y Lopera-Castaño (2020) es uno de los pocos antecedentes con una muestra de tamaño considerable (11.812 empresas), y es anterior a la disponibilidad pública del panel amplio y multisectorial que hoy ofrece el SIIS de la Superintendencia de Sociedades. Revisiones sistemáticas más recientes, como la de Zhao, Ouenniche y De Smedt (2024) y la de Nugroho y Dewayanto (2025) —esta última basada en la metodología PRISMA sobre 41 artículos indexados en SCOPUS entre 2014 y 2024—, confirman que los modelos híbridos que combinan técnicas estadísticas clásicas con algoritmos de aprendizaje automático logran los niveles de exactitud más altos reportados en la literatura, y señalan el desbalance de clases como uno de los retos centrales de este campo.</p>
+<p>Un indicador financiero aislado —una cifra de rentabilidad, un margen o una razón de liquidez— carece de valor explicativo por sí mismo; su utilidad surge únicamente cuando se convierte en insumo para anticipar un evento concreto. En el campo de las finanzas corporativas, el evento con mayor respaldo académico es el de la insolvencia financiera (<em>financial distress</em>), cuya manifestación más severa es la insolvencia o quiebra empresarial. Este fenómeno no ocurre de un día para otro: desde los trabajos pioneros de <span class="bibtex-citation" id="id1">[]</span>, la literatura ha documentado que el deterioro se manifiesta con antelación en el comportamiento de las razones de rentabilidad, liquidez y endeudamiento, mucho antes de que la empresa incumpla formalmente sus obligaciones.</p>
+<p>Sin embargo, el análisis univariado de Beaver tenía una limitación importante: evaluaba cada razón financiera de forma aislada, sin capturar cómo interactúan entre sí. Como demostró <span class="bibtex-citation" id="id2">[]</span> al superar esa limitación mediante el desarrollo del <em>Z-Score</em> con análisis discriminante múltiple, combinar varios indicadores financieros en un único modelo multivariado permite estimar con mayor precisión la probabilidad de quiebra empresarial. Poco después, <span class="bibtex-citation" id="id3">[]</span> incorporó los modelos probabilísticos al campo mediante regresión logística, superando algunos de los supuestos estadísticos restrictivos del análisis discriminante —principalmente la exigencia de normalidad multivariada que el Z-Score no siempre cumplía en la práctica—. Estos dos trabajos sentaron las bases metodológicas que, décadas después, permitirían el salto hacia el aprendizaje automático.</p>
+<p>Ese salto lo marcó <span class="bibtex-citation" id="id4">[]</span>, quienes compararon distintas técnicas de machine learning —random forest, bagging, boosting, redes neuronales y support vector machines— frente a los métodos estadísticos tradicionales, mostrando que los modelos de ensamble superaban de forma consistente a los métodos clásicos. En el contexto colombiano, sin embargo, este tipo de estudios sigue siendo escaso: <span class="bibtex-citation" id="id5">[]</span> es uno de los pocos antecedentes con una muestra de tamaño considerable (11.812 empresas), y es anterior a la disponibilidad pública del panel amplio y multisectorial que hoy ofrece el SIIS de la Superintendencia de Sociedades. Esta es precisamente la brecha que el presente estudio busca atender: un panel más reciente, más amplio y multisectorial, en un país donde la evidencia empírica sigue siendo limitada. Revisiones sistemáticas más recientes, como la de <span class="bibtex-citation" id="id6">[]</span> y la de <span class="bibtex-citation" id="id7">[]</span> —esta última basada en la metodología PRISMA sobre 41 artículos indexados en SCOPUS entre 2014 y 2024—, confirman que los modelos híbridos que combinan técnicas estadísticas clásicas con algoritmos de aprendizaje automático logran los niveles de exactitud más altos reportados en la literatura, y señalan el desbalance de clases como uno de los retos centrales de este campo, un reto que este trabajo aborda de manera explícita en su diseño metodológico.</p>
 </section>
 <section id="contexto-del-dataset">
 <h2>1.2 Contexto del Dataset<a class="headerlink" href="#contexto-del-dataset" title="Link to this heading">#</a></h2>
@@ -398,8 +410,8 @@
 </div></blockquote>
 <p>La anterior pregunta abarca tres dimensiones fundamentales sobre la investigación:</p>
 <p><strong>Dimensión histórica:</strong> se tiene en cuenta el comportamiento de los indicadores de rentabilidad, liquidez, endeudamiento y flujo de caja libre a lo largo del tiempo (2017-2024), incluyendo su evolución antes, durante y después de la pandemia. Por esta razón, se analiza cómo han variado estos indicadores y qué papel desempeña el flujo de caja libre frente a las razones financieras tradicionales como señal temprana de deterioro.</p>
-<p><strong>Dimensión sectorial:</strong> es necesario identificar si el comportamiento financiero tiene un impacto distinto o si varía de acuerdo al sector económico (CIIU) de cada empresa. Analizando si existen diferencias sectoriales relevantes que deban considerarse al construir el modelo predictivo, en lugar de tratar a todas las empresas como comparables entre sí sin importar su industria.</p>
-<p><strong>Dimensión metodológica:</strong> para poder anticipar el riesgo de insolvencia es esencial definir operativamente el evento a predecir —dado que el SIIS no reporta directamente eventos de quiebra—, identificar los indicadores con mayor poder predictivo mediante análisis de correlación y selección de variables, y abordar explícitamente el desbalance de clases propio de este tipo de eventos al evaluar los modelos.</p>
+<p><strong>Dimensión sectorial:</strong> es necesario identificar si el comportamiento financiero tiene un impacto distinto o si varía de acuerdo al sector económico (CIIU) de cada empresa, dado que un mismo nivel de endeudamiento o liquidez puede ser señal de alerta en un sector y comportamiento normal en otro. Por ello se analiza si existen diferencias sectoriales relevantes que deban considerarse al construir el modelo predictivo, en lugar de tratar a todas las empresas como comparables entre sí sin importar su industria.</p>
+<p><strong>Dimensión metodológica:</strong> para poder anticipar el riesgo de insolvencia es esencial definir operativamente el evento a predecir —dado que el SIIS no reporta directamente eventos de quiebra—, identificar los indicadores con mayor poder predictivo mediante análisis de correlación y selección de variables, y abordar explícitamente el desbalance de clases propio de este tipo de eventos al evaluar los modelos, ya que las empresas en insolvencia representan una minoría dentro del panel.</p>
 </section>
 <section id="objetivos-del-estudio">
 <h2>1.4 Objetivos del Estudio<a class="headerlink" href="#objetivos-del-estudio" title="Link to this heading">#</a></h2>
@@ -413,12 +425,15 @@
 <p><strong>Identificación de las diferencias sectoriales y temporales:</strong> determinar si existen patrones sistemáticos en el comportamiento financiero entre sectores económicos (CIIU) y entre los periodos pre-pandemia, pandemia y post-pandemia, para así poder identificar las señales más relevantes de cara al modelo predictivo.</p>
 <p><strong>Selección de variables con mayor poder predictivo:</strong> identificar, mediante análisis de correlación y técnicas de selección de variables, los indicadores financieros con mayor poder predictivo respecto al deterioro o riesgo de insolvencia financiera de las empresas del panel.</p>
 <p><strong>Implementación y comparación de modelos de machine learning:</strong> implementar y comparar modelos de machine learning clásico (regresión logística, árboles de decisión y métodos de ensamble) para clasificar el riesgo de insolvencia financiera, evaluando su desempeño mediante métricas apropiadas para el desbalance de clases propio de este tipo de eventos.</p>
+<p>Estos cuatro objetivos son secuenciales: los dos primeros construyen el conocimiento descriptivo del panel, el tercero traduce ese conocimiento en un conjunto reducido y justificado de variables, y el cuarto aprovecha esas variables para construir y comparar los modelos predictivos propiamente dichos.</p>
 </section>
 </section>
 <section id="notebook-analitico-interactivo">
 <h2>1.5 Notebook Analítico Interactivo<a class="headerlink" href="#notebook-analitico-interactivo" title="Link to this heading">#</a></h2>
 <p>Como complemento a este análisis, se desarrolló un notebook analítico interactivo (Python, Plotly) que permite explorar los datos de manera dinámica, incluyendo visualizaciones de evolución temporal por periodo (pre-pandemia, pandemia, post-pandemia), comparación sectorial (CIIU), un mapa geográfico por departamento, una matriz de transición de riesgo (“semáforo” financiero) y un ranking de empresas destacadas por etapa, como preparación para la etapa de modelado predictivo.</p>
 </section>
+<div class="toctree-wrapper compound">
+</div>
 </section>
 
     <script type="text/x-thebe-config">
@@ -451,6 +466,15 @@
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="right-next"
+       href="EDA_Insolvencia_SIIS.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">EDA - Predicción de insolvencia financiera (SIIS / Supersociedades)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
