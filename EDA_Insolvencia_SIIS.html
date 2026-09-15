@@ -1934,7 +1934,7 @@
 </div>
 <p><strong>Cómo leerlo:</strong> esto describe la evolución del panorama financiero agregado del universo de empresas grandes de Colombia entre 2017 y 2024 — por ejemplo, si EBITDA y capital de trabajo tienden a subir mientras el FCL se mantiene volátil, sugiere que las empresas están generando más utilidad operativa y reinvirtiéndola (menos caja libre disponible), más que señales de deterioro generalizado. La franja sombreada marca la ventana de pandemia para facilitar la lectura del quiebre.</p>
 <blockquote>
-<div><p><strong>Interpretación con los datos reales (Claude):</strong> EBITDA mediano sube de 1.95M (2017) a 3.83M (2024); capital de trabajo de 4.05M a 8.11M. Son pesos <strong>nominales</strong>, no deflactados — con la inflación acumulada de Colombia en el periodo, buena parte de ese “crecimiento” puede ser puramente nominal. FCL es mucho más errático: 954 (2017) → 339,431 (2020, plena pandemia) → cae a 29,435 (2022) → 291,502 (2024). El salto de 2020 es contraintuitivo y se explica mejor con la cascada de la sección 11.</p>
+<div><p>EBITDA mediano sube de 1.95M (2017) a 3.83M (2024); capital de trabajo de 4.05M a 8.11M. Son pesos <strong>nominales</strong>, no deflactados — con la inflación acumulada de Colombia en el periodo, buena parte de ese “crecimiento” puede ser puramente nominal. FCL es mucho más errático: 954 (2017) → 339,431 (2020, plena pandemia) → cae a 29,435 (2022) → 291,502 (2024). El salto de 2020 es contraintuitivo y se explica mejor con la cascada de la sección 11.</p>
 </div></blockquote>
 </section>
 <section id="senales-de-estres-financiero-de-empresas-en-terreno-negativo">
@@ -2094,7 +2094,7 @@
 </div>
 <p><strong>Cómo leerlo:</strong> estas tasas son candidatas naturales a <strong>variables binarias derivadas</strong> (features) para el modelo de insolvencia — una empresa con EBITDA y capital de trabajo negativos simultáneamente varios años seguidos es un patrón de riesgo mucho más fuerte que cualquiera de las variables por separado. También sirve como chequeo de razonabilidad: picos en años como 2020 (pandemia) deberían reflejarse aquí si el dato es consistente con la realidad económica.</p>
 <blockquote>
-<div><p><strong>Interpretación con los datos reales (Claude):</strong> Tres lecturas importantes: (1) FCL negativo (38.7%-46.8%) siempre duplica o casi duplica el % de EBITDA negativo (17.8%-24.0%) — buena parte de las empresas operativamente rentables igual queman caja libre. (2) 2020 es un año raro: EBITDA negativo sube a su máximo (23.97%), pero FCL negativo cae a su <strong>mínimo</strong> (38.70%) — lectura más probable: con la incertidumbre de 2020 las empresas recortaron CapEx de golpe, mejorando el FCL a pesar del golpe operativo, no porque el negocio mejorara. (3) Capital de trabajo negativo no sigue el mismo patrón que EBITDA ni FCL — es la variable más independiente de las tres, coherente con la correlación baja de la sección 12.</p>
+<div><p>Tres lecturas importantes: (1) FCL negativo (38.7%-46.8%) siempre duplica o casi duplica el % de EBITDA negativo (17.8%-24.0%) — buena parte de las empresas operativamente rentables igual queman caja libre. (2) 2020 es un año raro: EBITDA negativo sube a su máximo (23.97%), pero FCL negativo cae a su <strong>mínimo</strong> (38.70%) — lectura más probable: con la incertidumbre de 2020 las empresas recortaron CapEx de golpe, mejorando el FCL a pesar del golpe operativo, no porque el negocio mejorara. (3) Capital de trabajo negativo no sigue el mismo patrón que EBITDA ni FCL — es la variable más independiente de las tres, coherente con la correlación baja de la sección 12.</p>
 </div></blockquote>
 </section>
 <section id="comparacion-por-periodo-pre-pandemia-pandemia-post-pandemia">
@@ -5212,7 +5212,6 @@ valores nulos (NaN): 4 de 22521
 <li><p><strong>Cuidado con conteos chicos</strong> al leer el mapa por departamento (Sucre 100%) y sectores con pocas empresas (CIIU R9, n=20) — cualquier porcentaje ahí necesita ir acompañado de su n.</p></li>
 <li><p><strong>Salida del panel ≠ insolvencia</strong> — para el label real hay que usar el proxy de corte extraordinario que define la metodología, no la desaparición de la muestra de empresas más grandes.</p></li>
 </ol>
-<p><em>(Interpretaciones agregadas por Claude a partir de los valores reales de cada gráfico/tabla del notebook, cruzados con <code class="docutils literal notranslate"><span class="pre">metodologia_modelo_riesgo_insolvencia.pdf</span></code>.)</em></p>
 </section>
 </section>
 
