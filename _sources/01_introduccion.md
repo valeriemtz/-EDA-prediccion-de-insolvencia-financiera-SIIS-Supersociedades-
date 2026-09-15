@@ -1,6 +1,5 @@
 # 1 Introducción
 
-![Logo](images/logo.png)
 
 ## 1.1 Contexto del Problema
 
