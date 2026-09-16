@@ -22,25 +22,50 @@ El uso de **variables relativas (ratios)** en lugar de niveles absolutos en COP 
 
 **Variables ancla (niveles).** Tres variables en COP sirven de base para el resto de indicadores:
 
-| Variable | Fórmula |
-|---|---|
-| Capital de trabajo (CT) | $CT = \text{Activos corrientes} - \text{Pasivos corrientes}$ |
-| EBITDA | $EBITDA = \text{Ganancia operacional} + \text{Depreciación y amortización}$ |
-| Flujo de caja libre (FCL) | $FCL = CFO - \left(\lvert CapEx_{PPE}\rvert + \lvert CapEx_{Intangibles}\rvert\right)$ |
+::::{grid} 1 1 3 3
+:gutter: 2
+
+:::{grid-item-card} Capital de trabajo (CT)
+$$CT = \text{Activos corrientes} - \text{Pasivos corrientes}$$
+:::
+
+:::{grid-item-card} EBITDA
+$$EBITDA = \text{Ganancia operacional} + \text{Depreciación y amortización}$$
+:::
+
+:::{grid-item-card} Flujo de caja libre (FCL)
+$$FCL = CFO - \left(\lvert CapEx_{PPE}\rvert + \lvert CapEx_{Intangibles}\rvert\right)$$
+:::
+
+::::
 
 donde $CFO$ es el flujo de efectivo de las actividades de operación (*Cash Flow from Operating Activities*).
 
 **Ratios clásicos de análisis de crédito.** Construidos a partir de las variables ancla y de las cuatro dimensiones clásicas:
 
-| Dimensión | Ratio | Fórmula |
-|---|---|---|
-| Rentabilidad | Margen EBITDA | $\dfrac{EBITDA}{\text{Ingresos operacionales}}\times 100$ |
-| Rentabilidad | Margen neto | $\dfrac{\text{Ganancia (pérdida) neta}}{\text{Ingresos operacionales}}\times 100$ |
-| Rentabilidad | ROA (*Return on Assets*) | $\dfrac{\text{Ganancia (pérdida) neta}}{\text{Total de activos}}\times 100$ |
-| Endeudamiento | Apalancamiento | $\dfrac{\text{Total pasivos}}{\text{Total de activos}}\times 100$ |
-| Liquidez | Razón corriente | $\dfrac{\text{Activos corrientes}}{\text{Pasivos corrientes}}$ |
-| Flujo de caja | Cobertura de intereses | $\dfrac{\text{Ganancia por actividades de operación}}{\text{Costos financieros}}$ |
-| Flujo de caja | Cobertura operativa | $\dfrac{CFO}{\text{Pasivos corrientes totales}}$ |
+::::{grid} 1 1 2 2
+:gutter: 2
+
+:::{grid-item-card} Rentabilidad
+- **Margen EBITDA**: $\dfrac{EBITDA}{\text{Ingresos operacionales}}\times 100$
+- **Margen neto**: $\dfrac{\text{Ganancia (pérdida) neta}}{\text{Ingresos operacionales}}\times 100$
+- **ROA**: $\dfrac{\text{Ganancia (pérdida) neta}}{\text{Total de activos}}\times 100$
+:::
+
+:::{grid-item-card} Endeudamiento
+- **Apalancamiento**: $\dfrac{\text{Total pasivos}}{\text{Total de activos}}\times 100$
+:::
+
+:::{grid-item-card} Liquidez
+- **Razón corriente**: $\dfrac{\text{Activos corrientes}}{\text{Pasivos corrientes}}$
+:::
+
+:::{grid-item-card} Flujo de caja
+- **Cobertura de intereses**: $\dfrac{\text{Ganancia por actividades de operación}}{\text{Costos financieros}}$
+- **Cobertura operativa**: $\dfrac{CFO}{\text{Pasivos corrientes totales}}$
+:::
+
+::::
 
 ### Variables relativas al sector
 
@@ -66,34 +91,35 @@ En el panel: Pequeña = 7.506, Mediana = 7.505, Grande = 7.506 (N = 22.521).
 
 ## 2.3 Tratamiento de datos faltantes
 
-Se adoptó el marco formal de mecanismos de datos faltantes (Little & Rubin):
+Se adoptó el marco formal de mecanismos de datos faltantes (Little & Rubin), donde $R$ es el indicador binario de ausencia y $X_{obs}$, $X_{mis}$ son los datos observados y faltantes, respectivamente:
 
 - **MCAR** (*Missing Completely At Random*): $P(R \mid X_{obs}, X_{mis}) = P(R)$
 - **MAR** (*Missing At Random*): $P(R \mid X_{obs}, X_{mis}) = P(R \mid X_{obs})$
 - **MNAR** (*Missing Not At Random*): $P(R \mid X_{obs}, X_{mis}) \neq P(R \mid X_{obs})$
 
-donde $R$ es el indicador binario de ausencia y $X_{obs}$, $X_{mis}$ son los datos observados y faltantes, respectivamente. El porcentaje de faltantes por variable se calculó como:
+Porcentaje de faltantes por variable:
 $$
 \%\,\text{faltantes} = \frac{n_{\text{faltantes}}}{N} \times 100
 $$
 
+:::{note} Resultado
 Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es **margen neto = 7,10%**, muy por encima del resto de ratios (< 0,4%), clasificado como **MNAR**: el faltante depende de que los ingresos operacionales sean cero — el propio valor no observado (el ratio) está relacionado con la causa de su ausencia — por lo que no es ignorable estadísticamente.
+:::
 
 **Regla adoptada**: los ratios con denominador cero o nulo quedan como `NaN` (nunca se imputan con 0, ya que un ratio con denominador cero no es "cero", es "no calculable"); los faltantes residuales se excluyen solo del análisis de esa variable puntual, nunca eliminando la fila completa del panel.
 
 ## 2.4 Tratamiento de outliers y winsorización
 
-**Regla de detección por rango intercuartílico (Tukey).** Un valor $x_i$ se considera outlier si:
-$$
-x_i < Q_1 - 1.5 \cdot IQR \quad \text{o} \quad x_i > Q_3 + 1.5 \cdot IQR
-$$
-y outlier extremo bajo la regla de $3 \times IQR$ si:
-$$
-x_i < Q_1 - 3 \cdot IQR \quad \text{o} \quad x_i > Q_3 + 3 \cdot IQR
-$$
+**Regla de detección por rango intercuartílico (Tukey).** Un valor $x_i$ se considera:
+
+- **Outlier**: $x_i < Q_1 - 1.5 \cdot IQR$ o $x_i > Q_3 + 1.5 \cdot IQR$
+- **Outlier extremo**: $x_i < Q_1 - 3 \cdot IQR$ o $x_i > Q_3 + 3 \cdot IQR$
+
 Este es el criterio que sustenta la lectura de los boxplots por año y por periodo (sección 2.5): los puntos fuera de los bigotes son las empresas atípicas de cada corte.
 
+:::{note} Validación de origen
 Antes de decidir cómo tratar estos valores se verificó su origen mediante la identidad contable (fórmula en la sección 2.9): **0 de 22.517 registros** mostraron una inconsistencia mayor al 1%, confirmando que los extremos no son errores de captura sino ratios distorsionados por denominadores cercanos a cero.
+:::
 
 **Winsorización.** Se aplicó recorte al percentil 1 y 99 sobre las variables de nivel:
 $$
@@ -104,27 +130,37 @@ x_i & \text{si } Q_{0.01} \le x_i \le Q_{0.99} \\
 Q_{0.99} & \text{si } x_i > Q_{0.99}
 \end{cases}
 $$
-A diferencia de eliminar filas, la winsorización preserva el tamaño de la muestra y no desplaza las medias — confirmado empíricamente (EBITDA, capital de trabajo y FCL mantienen la misma media antes y después del recorte). El mismo criterio queda pendiente de aplicarse a los cuatro ratios financieros antes del cálculo definitivo de VIF y de la selección final de variables del modelo.
+
+A diferencia de eliminar filas, la winsorización preserva el tamaño de la muestra y no desplaza las medias — confirmado empíricamente (EBITDA, capital de trabajo y FCL mantienen la misma media antes y después del recorte).
 
 ## 2.5 Estadística descriptiva y análisis de distribución
 
 **Estadísticos robustos.** Dada la asimetría esperada en datos financieros, se priorizó la mediana y el rango intercuartílico sobre la media, por ser menos sensibles a valores extremos:
 
+::::{grid} 1 1 2 2
+:gutter: 2
+
+:::{grid-item-card} Media y mediana
 $$
 \bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i
-\qquad\qquad
+\qquad
 \tilde{x} =
 \begin{cases}
 x_{\left(\frac{n+1}{2}\right)} & n \text{ impar} \\[4pt]
 \dfrac{x_{(n/2)} + x_{(n/2+1)}}{2} & n \text{ par}
 \end{cases}
 $$
+:::
 
+:::{grid-item-card} Desviación estándar e IQR
 $$
 s = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2}
-\qquad\qquad
+\qquad
 IQR = Q_3 - Q_1
 $$
+:::
+
+::::
 
 con cuartiles obtenidos por interpolación lineal $Q_p = x_{(k)} + (n\cdot p - k)\cdot\left(x_{(k+1)}-x_{(k)}\right)$, $k=\lfloor n\cdot p\rfloor$, $p \in \{0.25,\,0.5,\,0.75\}$.
 
@@ -132,13 +168,21 @@ con cuartiles obtenidos por interpolación lineal $Q_p = x_{(k)} + (n\cdot p - k
 $$
 g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{3/2}}
 $$
-Interpretación: $|g_1|<0.5$ aproximadamente simétrica; $0.5 \le |g_1| < 1$ asimetría moderada; $|g_1|\ge 1$ asimetría fuerte. En el panel: EBITDA = 33,70; ROA = 130,61; apalancamiento = 149,38; margen neto = −139,92 — asimetría fuerte generalizada, más extrema en los ratios que en las variables de nivel.
+
+:::{note} Interpretación y resultado
+- $|g_1| < 0.5$: aproximadamente simétrica · $0.5 \le |g_1| < 1$: asimetría moderada · $|g_1| \ge 1$: asimetría fuerte
+- En el panel: EBITDA = 33,70 · ROA = 130,61 · apalancamiento = 149,38 · margen neto = −139,92 — asimetría fuerte generalizada, más extrema en los ratios que en las variables de nivel.
+:::
 
 **Curtosis en exceso (Fisher):**
 $$
 g_2 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^4}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{2}} - 3
 $$
-$g_2 = 0$: mesocúrtica (igual que la normal); $g_2>0$: leptocúrtica (colas más pesadas); $g_2<0$: platicúrtica. En el panel: EBITDA = 1.902,76; ROA = 17.890,37; apalancamiento = 22.375,51 — colas extremadamente pesadas, coherente con la contaminación por denominadores casi nulos descrita en 2.4.
+
+:::{note} Interpretación y resultado
+- $g_2 = 0$: mesocúrtica (igual que la normal) · $g_2 > 0$: leptocúrtica (colas más pesadas) · $g_2 < 0$: platicúrtica
+- En el panel: EBITDA = 1.902,76 · ROA = 17.890,37 · apalancamiento = 22.375,51 — colas extremadamente pesadas, coherente con la contaminación por denominadores casi nulos descrita en 2.4.
+:::
 
 **Signed-log (transformación para visualización).** Para representar histogramas y series sin que los outliers aplasten la escala, preservando el signo de valores negativos:
 $$
@@ -150,7 +194,8 @@ $$
 $$
 \hat{F}_n(x) = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}\{x_i \le x\}
 $$
-donde $\mathbb{1}\{\cdot\}$ es la función indicadora. El punto donde la ECDF cruza $x=0$ corresponde directamente al porcentaje de empresas con esa variable en negativo — la lectura usada en la sección de señales de estrés financiero.
+
+- $\mathbb{1}\{\cdot\}$: función indicadora. El punto donde la ECDF cruza $x=0$ corresponde directamente al porcentaje de empresas con esa variable en negativo — la lectura usada en la sección de señales de estrés financiero.
 
 ## 2.6 Análisis bivariado y multicolinealidad
 
@@ -169,7 +214,21 @@ donde $d_i$ es la diferencia entre los rangos de $x_i$ y $y_i$.
 $$
 VIF_j = \frac{1}{1-R_j^2}
 $$
-donde $R_j^2$ es el coeficiente de determinación de la regresión de la variable $x_j$ sobre el resto de variables candidatas. Interpretación: $VIF<5$ sin multicolinealidad problemática; $5\le VIF<10$ moderada; $VIF\ge 10$ severa. El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4; su recálculo sobre datos winsorizados es un paso pendiente antes de fijar el set final de variables.
+
+- $R_j^2$: coeficiente de determinación de la regresión de la variable $x_j$ sobre el resto de variables candidatas.
+
+:::{note} Interpretación del VIF
+- $VIF < 5$ → sin multicolinealidad problemática
+- $5 \le VIF < 10$ → moderada
+- $VIF \ge 10$ → severa
+:::
+
+El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4.
+
+:::{warning} Pendientes antes de fijar el set final de variables
+- Aplicar winsorización (percentil 1-99) a los cuatro ratios financieros, no solo a las variables de nivel (sección 2.4).
+- Recalcular el VIF sobre esos datos winsorizados — el valor actual (~256.000 en apalancamiento y ROA) está contaminado por outliers de denominador-casi-cero, no refleja multicolinealidad real.
+:::
 
 ## 2.7 Análisis comparativo por grupos
 
@@ -177,11 +236,16 @@ donde $R_j^2$ es el coeficiente de determinación de la regresión de la variabl
 $$
 H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 $$
-donde $N$ es el total de observaciones, $k$ el número de grupos, $n_i$ el tamaño del grupo $i$ y $R_i$ la suma de rangos del grupo $i$. Hipótesis: $H_0$: las medianas de los $k$ grupos son iguales; $H_1$: al menos una mediana difiere.
 
-Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemia — y (b) terciles de tamaño de empresa. Para los periodos, el resultado fue $H = 203,\ 183,\ 52$ (según la variable) con $p \approx 0$ en los tres casos: diferencias estadísticamente significativas, aunque, dado el tamaño de muestra ($N>22.000$), el desplazamiento real en escala signed-log es modesto — punto que se retoma formalmente en la sección 2.8.
+- $N$: total de observaciones · $k$: número de grupos · $n_i$: tamaño del grupo $i$ · $R_i$: suma de rangos del grupo $i$
+- Hipótesis: $H_0$ — las medianas de los $k$ grupos son iguales · $H_1$ — al menos una mediana difiere
 
-Adicionalmente, se compararon proporciones entre terciles de tamaño: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.
+Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemia — y (b) terciles de tamaño de empresa.
+
+:::{note} Resultados
+- **Periodos**: $H = 203,\ 183,\ 52$ (según la variable) con $p \approx 0$ en los tres casos — diferencias estadísticamente significativas, aunque, dado el tamaño de muestra ($N>22.000$), el desplazamiento real en escala signed-log es modesto (se retoma en la sección 2.8).
+- **Terciles de tamaño**: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.
+:::
 
 ## 2.8 Indicadores compuestos de riesgo
 
@@ -191,19 +255,31 @@ Adicionalmente, se compararon proporciones entre terciles de tamaño: el % de EB
 $$
 \chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}
 $$
-donde $O_{ij}$ es la frecuencia observada y $E_{ij}$ la frecuencia esperada bajo independencia en la celda $(i,j)$ de la tabla de contingencia semáforo × periodo.
+
+- $O_{ij}$: frecuencia observada · $E_{ij}$: frecuencia esperada bajo independencia en la celda $(i,j)$ de la tabla de contingencia semáforo × periodo.
 
 **Tamaño del efecto — V de Cramér:**
 $$
 V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
 $$
-donde $r$ y $c$ son el número de filas y columnas de la tabla de contingencia. Resultado obtenido: $\chi^2$ con $p = 3{,}73\times10^{-5}$ (estadísticamente significativo) pero $V = 0{,}024$ (efecto económicamente casi nulo) — con $N>22.000$ observaciones, un efecto minúsculo ya resulta "significativo", por lo que el $p$-valor nunca debe leerse sin su tamaño de efecto.
+
+- $r$, $c$: número de filas y columnas de la tabla de contingencia.
+
+:::{note} Resultado
+$\chi^2$ con $p = 3{,}73\times10^{-5}$ (estadísticamente significativo) pero $V = 0{,}024$ (efecto económicamente casi nulo). Con $N>22.000$ observaciones, un efecto minúsculo ya resulta "significativo", por lo que el $p$-valor nunca debe leerse sin su tamaño de efecto.
+:::
 
 **Persistencia del riesgo — matriz de transición (cadena de Markov de primer orden).** La probabilidad de transición del estado $i$ en el año $t$ al estado $j$ en el año $t+1$ se estima como:
 $$
 \hat{P}_{ij} = \frac{n_{ij}}{n_{i\cdot}}
 $$
-donde $n_{ij}$ es el número de empresas que pasaron del estado $i$ al estado $j$ y $n_{i\cdot}=\sum_j n_{ij}$ es el total de empresas que estaban en el estado $i$. Resultado: desde "Riesgo alto", $\hat{P}=44{,}9\%$ permanece en Riesgo alto, $37{,}2\%$ transiciona a Alerta y $17{,}9\%$ pasa directo a Sano — "Riesgo alto" no es un estado absorbente, pero sí muestra persistencia suficiente para justificar un modelo predictivo basado en historia financiera.
+
+- $n_{ij}$: número de empresas que pasaron del estado $i$ al estado $j$
+- $n_{i\cdot}=\sum_j n_{ij}$: total de empresas que estaban en el estado $i$
+
+:::{note} Resultado
+Desde "Riesgo alto": $\hat{P}=44{,}9\%$ permanece en Riesgo alto, $37{,}2\%$ transiciona a Alerta y $17{,}9\%$ pasa directo a Sano — "Riesgo alto" no es un estado absorbente, pero sí muestra persistencia suficiente para justificar un modelo predictivo basado en historia financiera.
+:::
 
 ## 2.9 Validación de calidad y estructura del panel
 
@@ -211,10 +287,15 @@ donde $n_{ij}$ es el número de empresas que pasaron del estado $i$ al estado $j
 $$
 \text{Activos} = \text{Pasivos} + \text{Patrimonio}
 $$
+
+Formalizada como porcentaje de error:
 $$
 \%\,\text{error contable} = \frac{\text{Activos} - (\text{Pasivos} + \text{Patrimonio})}{\text{Activos}} \times 100
 $$
-Resultado: error contable promedio $\approx 0\%$ (−2,7e-19, ruido de punto flotante; desviación estándar = 0); **0 de 22.517 registros** con inconsistencia mayor al 1%. Esta validación es la que permite afirmar, en las secciones 2.4 a 2.6, que los valores extremos observados son reales y no errores de captura.
+
+:::{note} Resultado
+Error contable promedio $\approx 0\%$ (−2,7e-19, ruido de punto flotante; desviación estándar = 0); **0 de 22.517 registros** con inconsistencia mayor al 1%. Esta validación es la que permite afirmar, en las secciones 2.4 a 2.6, que los valores extremos observados son reales y no errores de captura.
+:::
 
 Se analizó también el balance de entradas y salidas del panel año a año (solo 38,0% de los NITs presentes los 8 años), dado que este no es un censo fijo de empresas sino un corte anual de "las más grandes de Colombia": la salida de una empresa del panel puede deberse a reducción de tamaño, fusión o falta de reporte, y **no equivale por sí misma a un evento de insolvencia**.
 
