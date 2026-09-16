@@ -225,9 +225,15 @@ El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.00
 Winsorizar resuelve el problema por completo: apalancamiento y ROA caen de $\approx 256.091$ a $1{,}27$ y $1{,}55$ respectivamente, y margen neto / margen EBITDA bajan de $176{,}42$ a $3{,}59$ y $3{,}55$. Las 8 variables candidatas quedan con $VIF < 5$ (el más alto es margen neto con $3{,}59$), confirmando que el problema original era enteramente contaminación por outliers y no multicolinealidad real: ninguna resulta redundante frente a las demás, y las 8 pueden entrar juntas al modelo sin inflar artificialmente sus coeficientes.
 :::
 
-:::{admonition} Pendiente
+:::{admonition} Resultado
 :class: teal
-Comparar la matriz de Spearman y la de Pearson-winsorizado (calculadas al inicio de esta sección) contra la matriz de Pearson cruda, para confirmar si la lectura de baja redundancia entre variables se sostiene una vez controlados los outliers.
+La lectura de baja redundancia **no se sostiene tal como se leyó sobre Pearson crudo**. En 14 de los 28 pares de variables, Pearson crudo reporta $r \approx 0{,}00$ mientras que Spearman y Pearson-winsorizado coinciden en signo y en una magnitud moderada-alta — por ejemplo ROA–margen neto (crudo $0{,}00$ → Spearman $0{,}83$ → winsorizado $0{,}44$) o EBITDA–ROA ($-0{,}00$ → $0{,}63$ → $0{,}27$): Pearson crudo no detectaba ausencia real de relación, sino que la varianza dominada por los outliers de denominador-casi-cero (secciones 2.4–2.5) enmascaraba relaciones reales.
+
+El caso más relevante es un **cambio de signo**, no solo de magnitud: ROA vs. apalancamiento pasa de $r=+0{,}94$ en Pearson crudo — la única correlación que originalmente sugería posible redundancia — a $-0{,}28$ (Spearman) y $-0{,}41$ (Pearson-winsorizado). El $+0{,}94$ crudo es un artefacto de un pequeño número de empresas con activos casi nulos que infla ambas variables simultáneamente; controlado ese efecto, la relación es negativa, coherente con la teoría financiera (mayor apalancamiento, menor ROA) y con el VIF winsorizado bajo de ambas variables (1,27 y 1,55).
+
+Un par queda como excepción a resolver por separado: margen neto vs. margen EBITDA pasa de $1{,}00$ (crudo) a $0{,}77$ (Spearman) a solo $0{,}08$ (Pearson-winsorizado) — los tres métodos discrepan entre sí en vez de converger, así que no se puede dar por confirmada ni descartada la redundancia entre estas dos variables con la evidencia actual.
+
+**Conclusión:** el diagnóstico de baja redundancia de la sección de VIF winsorizado se sostiene a nivel conjunto (las 8 variables entran con VIF < 5), pero a nivel de pares individuales, varias relaciones que Pearson crudo mostraba como nulas son en realidad moderadas a fuertes una vez controlados los outliers — y al menos una (ROA–apalancamiento) tenía el signo equivocado en la lectura cruda.
 :::
 
 ## 2.7 Análisis comparativo por grupos
@@ -290,9 +296,16 @@ con el nivel de significancia ajustado por el número de comparaciones ($\alpha/
 $W = 11{,}0$ (EBITDA), $29{,}5$ (capital de trabajo) y $6{,}8$ (FCL), los tres con $p \approx 0$: la dispersión también difiere entre periodos, no solo la mediana.
 :::
 
-:::{admonition} Pendiente
+:::{admonition} Resultado — Dunn's post-hoc
 :class: teal
-Dunn's post-hoc ya se ejecutó sobre el panel real, pero una limitación de la celda (en un bucle, Jupyter solo muestra automáticamente la salida de la última iteración) hizo que no quedaran registradas las tablas de $p$-valor por par de periodo para las tres variables; se corregirá la celda para capturar las tres tablas explícitamente y se completará este resultado.
+Con la celda corregida (visualización explícita de las tres tablas dentro del bucle), los $p$-valores ajustados por Bonferroni para cada par de periodos son:
+
+- **EBITDA y capital de trabajo:** los tres pares de periodos difieren entre sí de forma significativa ($p < 0{,}05$ en Pre-pandemia vs. Pandemia, Pre-pandemia vs. Post-pandemia y Pandemia vs. Post-pandemia) — cada periodo tiene una mediana distinta de los otros dos.
+- **FCL:** Pre-pandemia difiere de forma significativa de Pandemia y de Post-pandemia ($p < 0{,}05$ en ambos casos), pero **Pandemia y Post-pandemia no son distinguibles entre sí** ($p \approx 0{,}1$, por encima del umbral usual de $0{,}05$).
+
+Esto es coherente con el tamaño de efecto de la sección anterior: FCL tenía el $\eta_H^2$ más bajo de las tres variables (0,0022), y el post-hoc muestra por qué — su diferencia entre periodos está concentrada casi enteramente en el quiebre pre-pandemia vs. resto, no en una trayectoria de recuperación posterior a la pandemia como sí ocurre (de forma medible) en EBITDA y capital de trabajo.
+
+*Nota de precisión:* la tabla se despliega con el formato de `tabla_estilo` (1 decimal), por lo que los $p$-valores mostrados como $0{,}0}$ son valores por debajo de ese redondeo — probablemente muy cercanos a cero dado el tamaño de muestra ($N>22.000$) — y no se puede reportar aquí su magnitud exacta sin ajustar la precisión de despliegue en el notebook.
 :::
 
 ## 2.8 Indicadores compuestos de riesgo
