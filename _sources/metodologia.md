@@ -140,7 +140,7 @@ $$
 :::{admonition} Interpretación y resultado
 :class: teal
 - $|g_1| < 0.5$: aproximadamente simétrica · $0.5 \le |g_1| < 1$: asimetría moderada · $|g_1| \ge 1$: asimetría fuerte
-- En el panel: EBITDA = 33,70 · ROA = 130,61 · apalancamiento = 149,38 · margen neto = −139,92 — asimetría fuerte generalizada, más extrema en los ratios que en las variables de nivel.
+- En el panel: EBITDA = 33,70 · ROA = 130,61 · apalancamiento = 149,38 · margen neto = −139,92; asimetría fuerte generalizada, más extrema en los ratios que en las variables de nivel.
 :::
 
 **Curtosis en exceso (Fisher):**
@@ -152,7 +152,7 @@ $$
 :::{admonition} Interpretación y resultado
 :class: teal
 - $g_2 = 0$: mesocúrtica (igual que la normal) · $g_2 > 0$: leptocúrtica (colas más pesadas) · $g_2 < 0$: platicúrtica
-- En el panel: EBITDA = 1.902,76 · ROA = 17.890,37 · apalancamiento = 22.375,51 — colas extremadamente pesadas, coherente con la contaminación por denominadores casi nulos descrita en 2.4.
+- En el panel: EBITDA = 1.902,76 · ROA = 17.890,37 · apalancamiento = 22.375,51; colas extremadamente pesadas, coherente con la contaminación por denominadores casi nulos descrita en 2.4.
 :::
 
 **Signed-log (transformación para visualización).** Para representar histogramas y series sin que los outliers aplasten la escala, preservando el signo de valores negativos:
@@ -170,7 +170,7 @@ $$
 
 - $\mathbb{1}\{\cdot\}$: función indicadora. El punto donde la ECDF cruza $x=0$ corresponde directamente al porcentaje de empresas con esa variable en negativo, la lectura usada en la sección de señales de estrés financiero.
 
-**Prueba formal de normalidad — Jarque-Bera.** La asimetría y curtosis anteriores son estadísticos descriptivos; para contar con una prueba con hipótesis y $p$-valor propio se aplicó Jarque-Bera, válida asintóticamente para muestras grandes — a diferencia de Shapiro-Wilk, no confiable para $n > 5.000$, mientras que cada variable del panel supera las 20.000 observaciones:
+**Prueba formal de normalidad: Jarque-Bera.** La asimetría y curtosis anteriores son estadísticos descriptivos; para contar con una prueba con hipótesis y $p$-valor propio se aplicó Jarque-Bera, válida asintóticamente para muestras grandes, a diferencia de Shapiro-Wilk, no confiable para $n > 5.000$, mientras que cada variable del panel supera las 20.000 observaciones:
 
 $$
 JB = \frac{n}{6}\left(g_1^2 + \frac{g_2^2}{4}\right)
@@ -180,7 +180,7 @@ $$
 
 :::{admonition} Resultado
 :class: teal
-Se rechaza $H_0$ con $p \approx 0$ en las 7 variables — estadísticos JB desde $\approx 5{,}74\times10^{8}$ (capital de trabajo) hasta $\approx 4{,}70\times10^{11}$ (apalancamiento). Confirma formalmente lo que ya sugerían asimetría y curtosis: ninguna variable financiera del panel es normal, lo que respalda el uso de Kruskal-Wallis, Brown-Forsythe y Spearman en lugar de sus equivalentes paramétricos en las secciones 2.6 y 2.7.
+Se rechaza $H_0$ con $p \approx 0$ en las 7 variables, con estadísticos JB desde $\approx 5{,}74\times10^{8}$ (capital de trabajo) hasta $\approx 4{,}70\times10^{11}$ (apalancamiento). Confirma formalmente lo que ya sugerían asimetría y curtosis: ninguna variable financiera del panel es normal, lo que respalda el uso de Kruskal-Wallis, Brown-Forsythe y Spearman en lugar de sus equivalentes paramétricos en las secciones 2.6 y 2.7.
 :::
 
 ## 2.6 Análisis bivariado y multicolinealidad
@@ -216,7 +216,7 @@ $$
 - $VIF \ge 10$ → severa
 :::
 
-El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4.
+El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA, un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4.
 
 **VIF recalculado sobre variables winsorizadas.** Se aplicó la misma winsorización al percentil 1/99 (sección 2.4) a los cuatro ratios y al margen EBITDA, y se recalculó el VIF sobre las 8 variables candidatas ya winsorizadas.
 
@@ -227,13 +227,13 @@ Winsorizar resuelve el problema por completo: apalancamiento y ROA caen de $\app
 
 :::{admonition} Resultado
 :class: teal
-La lectura de baja redundancia **no se sostiene tal como se leyó sobre Pearson crudo**. En 14 de los 28 pares de variables, Pearson crudo reporta $r \approx 0{,}00$ mientras que Spearman y Pearson-winsorizado coinciden en signo y en una magnitud moderada-alta — por ejemplo ROA–margen neto (crudo $0{,}00$ → Spearman $0{,}83$ → winsorizado $0{,}44$) o EBITDA–ROA ($-0{,}00$ → $0{,}63$ → $0{,}27$): Pearson crudo no detectaba ausencia real de relación, sino que la varianza dominada por los outliers de denominador-casi-cero (secciones 2.4–2.5) enmascaraba relaciones reales.
+La lectura de baja redundancia **no se sostiene tal como se leyó sobre Pearson crudo**. En 14 de los 28 pares de variables, Pearson crudo reporta $r \approx 0{,}00$ mientras que Spearman y Pearson-winsorizado coinciden en signo y en una magnitud moderada-alta, por ejemplo ROA y margen neto (crudo $0{,}00$ → Spearman $0{,}83$ → winsorizado $0{,}44$) o EBITDA y ROA ($-0{,}00$ → $0{,}63$ → $0{,}27$): Pearson crudo no detectaba ausencia real de relación, sino que la varianza dominada por los outliers de denominador-casi-cero (secciones 2.4 a 2.5) enmascaraba relaciones reales.
 
-El caso más relevante es un **cambio de signo**, no solo de magnitud: ROA vs. apalancamiento pasa de $r=+0{,}94$ en Pearson crudo — la única correlación que originalmente sugería posible redundancia — a $-0{,}28$ (Spearman) y $-0{,}41$ (Pearson-winsorizado). El $+0{,}94$ crudo es un artefacto de un pequeño número de empresas con activos casi nulos que infla ambas variables simultáneamente; controlado ese efecto, la relación es negativa, coherente con la teoría financiera (mayor apalancamiento, menor ROA) y con el VIF winsorizado bajo de ambas variables (1,27 y 1,55).
+El caso más relevante es un **cambio de signo**, no solo de magnitud: ROA vs. apalancamiento pasa de $r=+0{,}94$ en Pearson crudo, la única correlación que originalmente sugería posible redundancia, a $-0{,}28$ (Spearman) y $-0{,}41$ (Pearson-winsorizado). El $+0{,}94$ crudo es un artefacto de un pequeño número de empresas con activos casi nulos que infla ambas variables simultáneamente; controlado ese efecto, la relación es negativa, coherente con la teoría financiera (mayor apalancamiento, menor ROA) y con el VIF winsorizado bajo de ambas variables (1,27 y 1,55).
 
-Un par queda como excepción a resolver por separado: margen neto vs. margen EBITDA pasa de $1{,}00$ (crudo) a $0{,}77$ (Spearman) a solo $0{,}08$ (Pearson-winsorizado) — los tres métodos discrepan entre sí en vez de converger, así que no se puede dar por confirmada ni descartada la redundancia entre estas dos variables con la evidencia actual.
+Un par queda como excepción a resolver por separado: margen neto vs. margen EBITDA pasa de $1{,}00$ (crudo) a $0{,}77$ (Spearman) a solo $0{,}08$ (Pearson-winsorizado); los tres métodos discrepan entre sí en vez de converger, así que no se puede dar por confirmada ni descartada la redundancia entre estas dos variables con la evidencia actual.
 
-**Conclusión:** el diagnóstico de baja redundancia de la sección de VIF winsorizado se sostiene a nivel conjunto (las 8 variables entran con VIF < 5), pero a nivel de pares individuales, varias relaciones que Pearson crudo mostraba como nulas son en realidad moderadas a fuertes una vez controlados los outliers — y al menos una (ROA–apalancamiento) tenía el signo equivocado en la lectura cruda.
+**Conclusión:** el diagnóstico de baja redundancia de la sección de VIF winsorizado se sostiene a nivel conjunto (las 8 variables entran con VIF < 5), pero a nivel de pares individuales, varias relaciones que Pearson crudo mostraba como nulas son en realidad moderadas a fuertes una vez controlados los outliers y al menos una (ROA y apalancamiento) tenía el signo equivocado en la lectura cruda.
 :::
 
 ## 2.7 Análisis comparativo por grupos
@@ -245,17 +245,17 @@ H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 $$
 
 - $N$: total de observaciones · $k$: número de grupos · $n_i$: tamaño del grupo $i$ · $R_i$: suma de rangos del grupo $i$
-- Hipótesis: $H_0$ — las medianas de los $k$ grupos son iguales · $H_1$ — al menos una mediana difiere
+- Hipótesis: $H_0$: las medianas de los $k$ grupos son iguales · $H_1$: al menos una mediana difiere
 
-Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemia — y (b) terciles de tamaño de empresa.
+Se aplicó para comparar (a) periodos: pre-pandemia, pandemia y post-pandemia; y (b) terciles de tamaño de empresa.
 
 :::{admonition} Resultados
 :class: teal
-- **Periodos**: $H = 203,\ 183,\ 52$ (según la variable) con $p \approx 0$ en los tres casos — diferencias estadísticamente significativas, aunque, dado el tamaño de muestra ($N>22.000$), el desplazamiento real en escala signed-log es modesto (se retoma en la sección 2.8).
-- **Terciles de tamaño**: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.
+- **Periodos**: $H = 203,\ 183,\ 52$ (según la variable) con $p \approx 0$ en los tres casos; diferencias estadísticamente significativas, aunque, dado el tamaño de muestra ($N>22.000$), el desplazamiento real en escala signed-log es modesto (se retoma en la sección 2.8).
+- **Terciles de tamaño**: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%); el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.
 :::
 
-**Tamaño de efecto — eta-cuadrado basado en H.** El $p$-valor de Kruskal-Wallis no distingue una diferencia real de una diferencia grande cuando $N$ es alto (mismo punto que se retoma con $V$ de Cramér en la sección 2.8); se completa con:
+**Tamaño de efecto: eta-cuadrado basado en H.** El $p$-valor de Kruskal-Wallis no distingue una diferencia real de una diferencia grande cuando $N$ es alto (mismo punto que se retoma con $V$ de Cramér en la sección 2.8); se completa con:
 
 $$
 \eta_H^2 = \frac{H-k+1}{N-k}
@@ -265,17 +265,17 @@ $$
 
 :::{admonition} Resultado
 :class: teal
-$\eta_H^2 = 0{,}0089$ (EBITDA), $0{,}0081$ (capital de trabajo) y $0{,}0022$ (FCL) — los tres por debajo del umbral de $0{,}01$ que Cohen asocia a un efecto "pequeño". La diferencia entre periodos es estadísticamente real pero de magnitud modesta, más marcada en EBITDA y prácticamente nula en FCL.
+$\eta_H^2 = 0{,}0089$ (EBITDA), $0{,}0081$ (capital de trabajo) y $0{,}0022$ (FCL); los tres por debajo del umbral de $0{,}01$ que Cohen asocia a un efecto "pequeño". La diferencia entre periodos es estadísticamente real pero de magnitud modesta, más marcada en EBITDA y prácticamente nula en FCL.
 :::
 
 **Corrección de comparaciones múltiples entre las 3 pruebas.** Dunn's corrige con Bonferroni *dentro* de cada variable, pero se corren 3 pruebas de Kruskal-Wallis independientes (una por variable) sin ajuste conjunto entre ellas; se cierra con el procedimiento de Benjamini-Hochberg (FDR):
 
 :::{admonition} Resultado
 :class: teal
-Los tres $p$-valores originales (todos $\approx 0$) siguen significativos tras el ajuste FDR-BH — el chequeo estaba pendiente, pero no cambia ninguna conclusión: ningún resultado dependía de evaluar los tres $p$-valores por separado.
+Los tres $p$-valores originales (todos $\approx 0$) siguen significativos tras el ajuste FDR-BH; el chequeo estaba pendiente, pero no cambia ninguna conclusión: ningún resultado dependía de evaluar los tres $p$-valores por separado.
 :::
 
-**Brown-Forsythe** (variante robusta del test de Levene para homogeneidad de varianzas entre grupos, usando la mediana en lugar de la media como centro — más apropiada dada la asimetría extrema documentada en la sección 2.5):
+**Brown-Forsythe** (variante robusta del test de Levene para homogeneidad de varianzas entre grupos, usando la mediana en lugar de la media como centro, más apropiada dada la asimetría extrema documentada en la sección 2.5):
 
 $$
 W = \frac{N-k}{k-1} \cdot \frac{\sum_{i=1}^{k} n_i (\bar{Z}_{i\cdot}-\bar{Z}_{\cdot\cdot})^2}{\sum_{i=1}^{k}\sum_{j=1}^{n_i}(Z_{ij}-\bar{Z}_{i\cdot})^2}
@@ -291,25 +291,27 @@ $$
 
 con el nivel de significancia ajustado por el número de comparaciones ($\alpha/m$, con $m=\binom{k}{2}$ pares) para controlar la inflación del error tipo I al hacer pruebas múltiples.
 
-:::{admonition} Resultado — Brown-Forsythe
+:::{admonition} Resultado: Brown-Forsythe
 :class: teal
 $W = 11{,}0$ (EBITDA), $29{,}5$ (capital de trabajo) y $6{,}8$ (FCL), los tres con $p \approx 0$: la dispersión también difiere entre periodos, no solo la mediana.
 :::
 
-:::{admonition} Resultado — Dunn's post-hoc
+:::{admonition} Resultado: Dunn's post-hoc
 :class: teal
 Con la celda corregida (visualización explícita de las tres tablas dentro del bucle, precisión a 3 decimales), los $p$-valores ajustados por Bonferroni para cada par de periodos son:
 
 | Variable | Pre-pandemia vs. Pandemia | Pre-pandemia vs. Post-pandemia | Pandemia vs. Post-pandemia |
 |---|---|---|---|
-| EBITDA | $0{,}002$ | $0{,}000$ | $0{,}000$ |
-| Capital de trabajo | $0{,}000$ | $0{,}000$ | $0{,}000$ |
-| FCL | $0{,}000$ | $0{,}000$ | $0{,}103$ |
+| EBITDA | 0,002 | 0,000 | 0,000 |
+| Capital de trabajo | 0,000 | 0,000 | 0,000 |
+| FCL | 0,000 | 0,000 | 0,103 |
 
-- **EBITDA y capital de trabajo:** los tres pares de periodos difieren entre sí de forma significativa ($p < 0{,}05$ en los tres pares) — cada periodo tiene una mediana distinta de los otros dos.
-- **FCL:** Pre-pandemia difiere de forma significativa de Pandemia y de Post-pandemia ($p < 0{,}001$ en ambos casos), pero **Pandemia y Post-pandemia no son distinguibles entre sí** ($p = 0{,}103$, por encima del umbral de $0{,}05$).
+- **EBITDA y capital de trabajo:** los tres pares de periodos difieren entre sí de forma significativa ($p < 0{,}05$ en Pre-pandemia vs. Pandemia, Pre-pandemia vs. Post-pandemia y Pandemia vs. Post-pandemia); cada periodo tiene una mediana distinta de los otros dos.
+- **FCL:** Pre-pandemia difiere de forma significativa de Pandemia y de Post-pandemia ($p < 0{,}05$ en ambos casos), pero **Pandemia y Post-pandemia no son distinguibles entre sí** ($p = 0{,}103$, por encima del umbral usual de $0{,}05$).
 
-Esto es coherente con el tamaño de efecto de la sección anterior: FCL tenía el $\eta_H^2$ más bajo de las tres variables (0,0022), y el post-hoc muestra por qué — su diferencia entre periodos está concentrada casi enteramente en el quiebre pre-pandemia vs. resto, no en una trayectoria de recuperación posterior a la pandemia como sí ocurre (de forma medible) en EBITDA y capital de trabajo.
+Esto es coherente con el tamaño de efecto de la sección anterior: FCL tenía el $\eta_H^2$ más bajo de las tres variables (0,0022), y el post-hoc muestra por qué: su diferencia entre periodos está concentrada casi enteramente en el quiebre pre-pandemia vs. resto, no en una trayectoria de recuperación posterior a la pandemia como sí ocurre (de forma medible) en EBITDA y capital de trabajo.
+
+*Nota de precisión:* con 3 decimales, los valores de EBITDA, capital de trabajo y FCL (salvo Pandemia vs. Post-pandemia en FCL) quedan por debajo de $0{,}001$ en la salida original del notebook; se reportan aquí como $0{,}000$ siguiendo ese mismo redondeo, dado el tamaño de muestra ($N>22.000$).
 :::
 
 ## 2.8 Indicadores compuestos de riesgo
@@ -324,7 +326,7 @@ $$
 
 - $O_{ij}$: frecuencia observada · $E_{ij}$: frecuencia esperada bajo independencia en la celda $(i,j)$ de la tabla de contingencia semáforo × periodo.
 
-**Tamaño del efecto — V de Cramér:**
+**Tamaño del efecto: V de Cramér:**
 
 $$
 V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
@@ -337,7 +339,7 @@ $$
 $\chi^2$ con $p = 3{,}73\times10^{-5}$ (estadísticamente significativo) pero $V = 0{,}024$ (efecto económicamente casi nulo). Con $N>22.000$ observaciones, un efecto minúsculo ya resulta "significativo", por lo que el $p$-valor nunca debe leerse sin su tamaño de efecto.
 :::
 
-**Persistencia del riesgo — matriz de transición (cadena de Markov de primer orden).** La probabilidad de transición del estado $i$ en el año $t$ al estado $j$ en el año $t+1$ se estima como:
+**Persistencia del riesgo: matriz de transición (cadena de Markov de primer orden).** La probabilidad de transición del estado $i$ en el año $t$ al estado $j$ en el año $t+1$ se estima como:
 
 $$
 \hat{P}_{ij} = \frac{n_{ij}}{n_{i\cdot}}
@@ -348,7 +350,7 @@ $$
 
 :::{admonition} Resultado
 :class: teal
-Desde "Riesgo alto": $\hat{P}=44{,}9\%$ permanece en Riesgo alto, $37{,}2\%$ transiciona a Alerta y $17{,}9\%$ pasa directo a Sano — "Riesgo alto" no es un estado absorbente, pero sí muestra persistencia suficiente para justificar un modelo predictivo basado en historia financiera.
+Desde "Riesgo alto": $\hat{P}=44{,}9\%$ permanece en Riesgo alto, $37{,}2\%$ transiciona a Alerta y $17{,}9\%$ pasa directo a Sano; "Riesgo alto" no es un estado absorbente, pero sí muestra persistencia suficiente para justificar un modelo predictivo basado en historia financiera.
 :::
 
 ## 2.9 Validación de calidad y estructura del panel
@@ -378,10 +380,10 @@ Como chequeo de robustez, se repitieron Kruskal-Wallis (sección 2.7) y chi-cuad
 
 :::{admonition} Resultado
 :class: teal
-- **Chi-cuadrado (semáforo × periodo) no sobrevive:** $\chi^2$ baja de $25{,}64$ a $6{,}57$ y el $p$-valor sube de $0{,}00004$ a $0{,}160$ — deja de ser significativo al 5%, aunque $V$ de Cramér se mantiene casi igual ($0{,}024 \to 0{,}028$). El $n$ inflado por las repeticiones de empresa era, en parte, el que fabricaba la significancia de esta prueba sobre el panel completo.
+- **Chi-cuadrado (semáforo × periodo) no sobrevive:** $\chi^2$ baja de $25{,}64$ a $6{,}57$ y el $p$-valor sube de $0{,}00004$ a $0{,}160$; deja de ser significativo al 5%, aunque $V$ de Cramér se mantiene casi igual ($0{,}024 \to 0{,}028$). El $n$ inflado por las repeticiones de empresa era, en parte, el que fabricaba la significancia de esta prueba sobre el panel completo.
 - **Kruskal-Wallis sí sobrevive:** el estadístico $H$ cae proporcionalmente al tamaño de muestra (EBITDA $202{,}6\to64{,}0$; capital de trabajo $183{,}4\to43{,}7$; FCL $52{,}2\to8{,}2$), pero el $p$-valor sigue por debajo de $0{,}05$ en las tres variables, incluida FCL ($p=0{,}016$).
 
-**Conclusión:** la comparación de niveles por periodo (sección 2.7) es robusta a la estructura de panel repetido; la lectura de significancia global del semáforo por periodo (sección 2.8) no lo es, y su resultado más confiable es el tamaño de efecto ($V$ de Cramér $\approx 0{,}02$–$0{,}03$), no el $p$-valor del chi-cuadrado sobre el panel completo. Se recomienda, para la siguiente etapa, usar errores estándar agrupados por NIT o un modelo de efectos mixtos en lugar de esta submuestra, empleada aquí solo como chequeo rápido.
+**Conclusión:** la comparación de niveles por periodo (sección 2.7) es robusta a la estructura de panel repetido; la lectura de significancia global del semáforo por periodo (sección 2.8) no lo es, y su resultado más confiable es el tamaño de efecto ($V$ de Cramér entre $0{,}02$ y $0{,}03$ aproximadamente), no el $p$-valor del chi-cuadrado sobre el panel completo. Se recomienda, para la siguiente etapa, usar errores estándar agrupados por NIT o un modelo de efectos mixtos en lugar de esta submuestra, empleada aquí solo como chequeo rápido.
 :::
 
 ## 2.10 Herramientas computacionales
