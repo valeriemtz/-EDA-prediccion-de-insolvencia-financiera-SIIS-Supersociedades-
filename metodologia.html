@@ -625,6 +625,18 @@ x' = \operatorname{sign}(x)\cdot\log(1+|x|), \qquad
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\mathbb{1}\{\cdot\}\)</span>: función indicadora. El punto donde la ECDF cruza <span class="math notranslate nohighlight">\(x=0\)</span> corresponde directamente al porcentaje de empresas con esa variable en negativo, la lectura usada en la sección de señales de estrés financiero.</p></li>
 </ul>
+<p><strong>Prueba formal de normalidad — Jarque-Bera.</strong> La asimetría y curtosis anteriores son estadísticos descriptivos; para contar con una prueba con hipótesis y <span class="math notranslate nohighlight">\(p\)</span>-valor propio se aplicó Jarque-Bera, válida asintóticamente para muestras grandes — a diferencia de Shapiro-Wilk, no confiable para <span class="math notranslate nohighlight">\(n &gt; 5.000\)</span>, mientras que cada variable del panel supera las 20.000 observaciones:</p>
+<div class="math notranslate nohighlight">
+\[
+JB = \frac{n}{6}\left(g_1^2 + \frac{g_2^2}{4}\right)
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(H_0\)</span>: la variable sigue una distribución normal · <span class="math notranslate nohighlight">\(H_1\)</span>: no la sigue.</p></li>
+</ul>
+<div class="teal admonition">
+<p class="admonition-title">Resultado</p>
+<p>Se rechaza <span class="math notranslate nohighlight">\(H_0\)</span> con <span class="math notranslate nohighlight">\(p \approx 0\)</span> en las 7 variables — estadísticos JB desde <span class="math notranslate nohighlight">\(\approx 5{,}74\times10^{8}\)</span> (capital de trabajo) hasta <span class="math notranslate nohighlight">\(\approx 4{,}70\times10^{11}\)</span> (apalancamiento). Confirma formalmente lo que ya sugerían asimetría y curtosis: ninguna variable financiera del panel es normal, lo que respalda el uso de Kruskal-Wallis, Brown-Forsythe y Spearman en lugar de sus equivalentes paramétricos en las secciones 2.6 y 2.7.</p>
+</div>
 </section>
 <section id="analisis-bivariado-y-multicolinealidad">
 <h2>2.6 Análisis bivariado y multicolinealidad<a class="headerlink" href="#analisis-bivariado-y-multicolinealidad" title="Link to this heading">#</a></h2>
@@ -657,13 +669,14 @@ VIF_j = \frac{1}{1-R_j^2}
 </ul>
 </div>
 <p>El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4.</p>
+<p><strong>VIF recalculado sobre variables winsorizadas.</strong> Se aplicó la misma winsorización al percentil 1/99 (sección 2.4) a los cuatro ratios y al margen EBITDA, y se recalculó el VIF sobre las 8 variables candidatas ya winsorizadas.</p>
 <div class="teal admonition">
-<p class="admonition-title">Pendientes antes de fijar el set final de variables</p>
-<ul class="simple">
-<li><p>Aplicar winsorización (percentil 1-99) a los cuatro ratios financieros, no solo a las variables de nivel (sección 2.4).</p></li>
-<li><p>Recalcular el VIF sobre esos datos winsorizados — el valor actual (~256.000 en apalancamiento y ROA) está contaminado por outliers de denominador-casi-cero, no refleja multicolinealidad real.</p></li>
-<li><p>Comparar la matriz de Spearman y la de Pearson-winsorizado contra la matriz de Pearson cruda de esta misma sección, para confirmar si la lectura de baja redundancia entre variables se sostiene una vez controlados los outliers.</p></li>
-</ul>
+<p class="admonition-title">Resultado</p>
+<p>Winsorizar resuelve el problema por completo: apalancamiento y ROA caen de <span class="math notranslate nohighlight">\(\approx 256.091\)</span> a <span class="math notranslate nohighlight">\(1{,}27\)</span> y <span class="math notranslate nohighlight">\(1{,}55\)</span> respectivamente, y margen neto / margen EBITDA bajan de <span class="math notranslate nohighlight">\(176{,}42\)</span> a <span class="math notranslate nohighlight">\(3{,}59\)</span> y <span class="math notranslate nohighlight">\(3{,}55\)</span>. Las 8 variables candidatas quedan con <span class="math notranslate nohighlight">\(VIF &lt; 5\)</span> (el más alto es margen neto con <span class="math notranslate nohighlight">\(3{,}59\)</span>), confirmando que el problema original era enteramente contaminación por outliers y no multicolinealidad real: ninguna resulta redundante frente a las demás, y las 8 pueden entrar juntas al modelo sin inflar artificialmente sus coeficientes.</p>
+</div>
+<div class="teal admonition">
+<p class="admonition-title">Pendiente</p>
+<p>Comparar la matriz de Spearman y la de Pearson-winsorizado (calculadas al inicio de esta sección) contra la matriz de Pearson cruda, para confirmar si la lectura de baja redundancia entre variables se sostiene una vez controlados los outliers.</p>
 </div>
 </section>
 <section id="analisis-comparativo-por-grupos">
@@ -685,6 +698,23 @@ H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 <li><p><strong>Terciles de tamaño</strong>: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.</p></li>
 </ul>
 </div>
+<p><strong>Tamaño de efecto — eta-cuadrado basado en H.</strong> El <span class="math notranslate nohighlight">\(p\)</span>-valor de Kruskal-Wallis no distingue una diferencia real de una diferencia grande cuando <span class="math notranslate nohighlight">\(N\)</span> es alto (mismo punto que se retoma con <span class="math notranslate nohighlight">\(V\)</span> de Cramér en la sección 2.8); se completa con:</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_H^2 = \frac{H-k+1}{N-k}
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(k\)</span>: número de grupos (periodos) · <span class="math notranslate nohighlight">\(N\)</span>: tamaño de muestra de la variable.</p></li>
+</ul>
+<div class="teal admonition">
+<p class="admonition-title">Resultado</p>
+<p><span class="math notranslate nohighlight">\(\eta_H^2 = 0{,}0089\)</span> (EBITDA), <span class="math notranslate nohighlight">\(0{,}0081\)</span> (capital de trabajo) y <span class="math notranslate nohighlight">\(0{,}0022\)</span> (FCL) — los tres por debajo del umbral de <span class="math notranslate nohighlight">\(0{,}01\)</span> que Cohen asocia a un efecto “pequeño”. La diferencia entre periodos es estadísticamente real pero de magnitud modesta, más marcada en EBITDA y prácticamente nula en FCL.</p>
+</div>
+<p><strong>Corrección de comparaciones múltiples entre las 3 pruebas.</strong> Dunn’s corrige con Bonferroni <em>dentro</em> de cada variable, pero se corren 3 pruebas de Kruskal-Wallis independientes (una por variable) sin ajuste conjunto entre ellas; se cierra con el procedimiento de Benjamini-Hochberg (FDR):</p>
+<div class="teal admonition">
+<p class="admonition-title">Resultado</p>
+<p>Los tres <span class="math notranslate nohighlight">\(p\)</span>-valores originales (todos <span class="math notranslate nohighlight">\(\approx 0\)</span>) siguen significativos tras el ajuste FDR-BH — el chequeo estaba pendiente, pero no cambia ninguna conclusión: ningún resultado dependía de evaluar los tres <span class="math notranslate nohighlight">\(p\)</span>-valores por separado.</p>
+</div>
 <p><strong>Brown-Forsythe</strong> (variante robusta del test de Levene para homogeneidad de varianzas entre grupos, usando la mediana en lugar de la media como centro — más apropiada dada la asimetría extrema documentada en la sección 2.5):</p>
 <div class="math notranslate nohighlight">
 \[
@@ -698,8 +728,12 @@ z = \frac{\bar{R}_i - \bar{R}_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\d
 \]</div>
 <p>con el nivel de significancia ajustado por el número de comparaciones (<span class="math notranslate nohighlight">\(\alpha/m\)</span>, con <span class="math notranslate nohighlight">\(m=\binom{k}{2}\)</span> pares) para controlar la inflación del error tipo I al hacer pruebas múltiples.</p>
 <div class="teal admonition">
+<p class="admonition-title">Resultado — Brown-Forsythe</p>
+<p><span class="math notranslate nohighlight">\(W = 11{,}0\)</span> (EBITDA), <span class="math notranslate nohighlight">\(29{,}5\)</span> (capital de trabajo) y <span class="math notranslate nohighlight">\(6{,}8\)</span> (FCL), los tres con <span class="math notranslate nohighlight">\(p \approx 0\)</span>: la dispersión también difiere entre periodos, no solo la mediana.</p>
+</div>
+<div class="teal admonition">
 <p class="admonition-title">Pendiente</p>
-<p>Brown-Forsythe y Dunn’s aún no se han ejecutado sobre el panel real (requieren los archivos fuente); se aplican sobre las mismas tres variables de nivel (EBITDA, capital de trabajo, FCL) y los mismos tres periodos usados en Kruskal-Wallis.</p>
+<p>Dunn’s post-hoc ya se ejecutó sobre el panel real, pero una limitación de la celda (en un bucle, Jupyter solo muestra automáticamente la salida de la última iteración) hizo que no quedaran registradas las tablas de <span class="math notranslate nohighlight">\(p\)</span>-valor por par de periodo para las tres variables; se corregirá la celda para capturar las tres tablas explícitamente y se completará este resultado.</p>
 </div>
 </section>
 <section id="indicadores-compuestos-de-riesgo">
@@ -756,6 +790,16 @@ V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
 <p>Error contable promedio <span class="math notranslate nohighlight">\(\approx 0\%\)</span> (−2,7e-19, ruido de punto flotante; desviación estándar = 0); <strong>0 de 22.517 registros</strong> con inconsistencia mayor al 1%. Esta validación es la que permite afirmar, en las secciones 2.4 a 2.6, que los valores extremos observados son reales y no errores de captura.</p>
 </div>
 <p>Se analizó también el balance de entradas y salidas del panel año a año (solo 38,0% de los NITs presentes los 8 años), dado que este no es un censo fijo de empresas sino un corte anual de “las más grandes de Colombia”: la salida de una empresa del panel puede deberse a reducción de tamaño, fusión o falta de reporte, y <strong>no equivale por sí misma a un evento de insolvencia</strong>.</p>
+<p><strong>Independencia de las observaciones (estructura panel).</strong> Las pruebas de las secciones 2.7 y 2.8 asumen observaciones independientes, pero el panel es empresa-año: 22.521 filas corresponden a solo 4.202 empresas únicas (NIT), con un promedio de 5,36 observaciones por empresa y hasta 8 para las que reportan los 8 años. Ninguna de las dos pruebas corrige por esta repetición (ni con errores estándar agrupados por NIT, ni con un modelo de efectos mixtos), lo que puede inflar el <span class="math notranslate nohighlight">\(n\)</span> efectivo y, con este, la significancia estadística.</p>
+<p>Como chequeo de robustez, se repitieron Kruskal-Wallis (sección 2.7) y chi-cuadrado (sección 2.8) sobre una muestra de <strong>una fila aleatoria por empresa</strong> (<span class="math notranslate nohighlight">\(n=4.202\)</span>, observaciones ahora sí independientes):</p>
+<div class="teal admonition">
+<p class="admonition-title">Resultado</p>
+<ul class="simple">
+<li><p><strong>Chi-cuadrado (semáforo × periodo) no sobrevive:</strong> <span class="math notranslate nohighlight">\(\chi^2\)</span> baja de <span class="math notranslate nohighlight">\(25{,}64\)</span> a <span class="math notranslate nohighlight">\(6{,}57\)</span> y el <span class="math notranslate nohighlight">\(p\)</span>-valor sube de <span class="math notranslate nohighlight">\(0{,}00004\)</span> a <span class="math notranslate nohighlight">\(0{,}160\)</span> — deja de ser significativo al 5%, aunque <span class="math notranslate nohighlight">\(V\)</span> de Cramér se mantiene casi igual (<span class="math notranslate nohighlight">\(0{,}024 \to 0{,}028\)</span>). El <span class="math notranslate nohighlight">\(n\)</span> inflado por las repeticiones de empresa era, en parte, el que fabricaba la significancia de esta prueba sobre el panel completo.</p></li>
+<li><p><strong>Kruskal-Wallis sí sobrevive:</strong> el estadístico <span class="math notranslate nohighlight">\(H\)</span> cae proporcionalmente al tamaño de muestra (EBITDA <span class="math notranslate nohighlight">\(202{,}6\to64{,}0\)</span>; capital de trabajo <span class="math notranslate nohighlight">\(183{,}4\to43{,}7\)</span>; FCL <span class="math notranslate nohighlight">\(52{,}2\to8{,}2\)</span>), pero el <span class="math notranslate nohighlight">\(p\)</span>-valor sigue por debajo de <span class="math notranslate nohighlight">\(0{,}05\)</span> en las tres variables, incluida FCL (<span class="math notranslate nohighlight">\(p=0{,}016\)</span>).</p></li>
+</ul>
+<p><strong>Conclusión:</strong> la comparación de niveles por periodo (sección 2.7) es robusta a la estructura de panel repetido; la lectura de significancia global del semáforo por periodo (sección 2.8) no lo es, y su resultado más confiable es el tamaño de efecto (<span class="math notranslate nohighlight">\(V\)</span> de Cramér <span class="math notranslate nohighlight">\(\approx 0{,}02\)</span>–<span class="math notranslate nohighlight">\(0{,}03\)</span>), no el <span class="math notranslate nohighlight">\(p\)</span>-valor del chi-cuadrado sobre el panel completo. Se recomienda, para la siguiente etapa, usar errores estándar agrupados por NIT o un modelo de efectos mixtos en lugar de esta submuestra, empleada aquí solo como chequeo rápido.</p>
+</div>
 </section>
 <section id="herramientas-computacionales">
 <h2>2.10 Herramientas computacionales<a class="headerlink" href="#herramientas-computacionales" title="Link to this heading">#</a></h2>
@@ -763,9 +807,9 @@ V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">pandas</span></code> y <code class="docutils literal notranslate"><span class="pre">numpy</span></code>: manipulación, transformación y cálculo de variables.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">plotly.express</span></code>, <code class="docutils literal notranslate"><span class="pre">plotly.graph_objects</span></code> y <code class="docutils literal notranslate"><span class="pre">plotly.subplots</span></code>: visualizaciones interactivas (histogramas, boxplots, cascadas, mapas coropléticos, series de tiempo).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scipy.stats</span></code> (<code class="docutils literal notranslate"><span class="pre">skew</span></code>, <code class="docutils literal notranslate"><span class="pre">kurtosis</span></code>, <code class="docutils literal notranslate"><span class="pre">kruskal</span></code>, <code class="docutils literal notranslate"><span class="pre">chi2_contingency</span></code>, <code class="docutils literal notranslate"><span class="pre">levene</span></code>): estadística descriptiva y pruebas de hipótesis no paramétricas.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scipy.stats</span></code> (<code class="docutils literal notranslate"><span class="pre">skew</span></code>, <code class="docutils literal notranslate"><span class="pre">kurtosis</span></code>, <code class="docutils literal notranslate"><span class="pre">kruskal</span></code>, <code class="docutils literal notranslate"><span class="pre">chi2_contingency</span></code>, <code class="docutils literal notranslate"><span class="pre">levene</span></code>, <code class="docutils literal notranslate"><span class="pre">jarque_bera</span></code>): estadística descriptiva y pruebas de hipótesis no paramétricas.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">scikit-posthocs</span></code> (<code class="docutils literal notranslate"><span class="pre">posthoc_dunn</span></code>): comparaciones post-hoc por pares tras Kruskal-Wallis.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">statsmodels</span></code> (<code class="docutils literal notranslate"><span class="pre">variance_inflation_factor</span></code>, <code class="docutils literal notranslate"><span class="pre">proportion_confint</span></code>, <code class="docutils literal notranslate"><span class="pre">add_constant</span></code>): diagnóstico de multicolinealidad e intervalos de confianza para proporciones.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">statsmodels</span></code> (<code class="docutils literal notranslate"><span class="pre">variance_inflation_factor</span></code>, <code class="docutils literal notranslate"><span class="pre">proportion_confint</span></code>, <code class="docutils literal notranslate"><span class="pre">add_constant</span></code>, <code class="docutils literal notranslate"><span class="pre">multipletests</span></code>): diagnóstico de multicolinealidad, intervalos de confianza para proporciones y corrección de comparaciones múltiples (FDR-BH).</p></li>
 </ul>
 </section>
 <section id="variables-del-dataset">
@@ -793,7 +837,7 @@ V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">roa</span></code>, <code class="docutils literal notranslate"><span class="pre">apalancamiento</span></code>, <code class="docutils literal notranslate"><span class="pre">razon_corriente</span></code>, <code class="docutils literal notranslate"><span class="pre">margen_neto</span></code>, <code class="docutils literal notranslate"><span class="pre">margen_ebitda</span></code></p></td>
 <td><p>Ratios clásicos de análisis de crédito</p></td>
-<td><p>Numérico continuo (ratio)</p></td>
+<td><p>Numérico continuo (ratio); versión winsorizada 1%/99% disponible (<code class="docutils literal notranslate"><span class="pre">_wz</span></code>)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">escala</span></code></p></td>
 <td><p><span class="math notranslate nohighlight">\(\log(\text{Total de activos}+1)\)</span></p></td>

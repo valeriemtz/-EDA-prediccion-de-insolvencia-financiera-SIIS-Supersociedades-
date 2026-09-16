@@ -170,6 +170,19 @@ $$
 
 - $\mathbb{1}\{\cdot\}$: función indicadora. El punto donde la ECDF cruza $x=0$ corresponde directamente al porcentaje de empresas con esa variable en negativo, la lectura usada en la sección de señales de estrés financiero.
 
+**Prueba formal de normalidad — Jarque-Bera.** La asimetría y curtosis anteriores son estadísticos descriptivos; para contar con una prueba con hipótesis y $p$-valor propio se aplicó Jarque-Bera, válida asintóticamente para muestras grandes — a diferencia de Shapiro-Wilk, no confiable para $n > 5.000$, mientras que cada variable del panel supera las 20.000 observaciones:
+
+$$
+JB = \frac{n}{6}\left(g_1^2 + \frac{g_2^2}{4}\right)
+$$
+
+- $H_0$: la variable sigue una distribución normal · $H_1$: no la sigue.
+
+:::{admonition} Resultado
+:class: teal
+Se rechaza $H_0$ con $p \approx 0$ en las 7 variables — estadísticos JB desde $\approx 5{,}74\times10^{8}$ (capital de trabajo) hasta $\approx 4{,}70\times10^{11}$ (apalancamiento). Confirma formalmente lo que ya sugerían asimetría y curtosis: ninguna variable financiera del panel es normal, lo que respalda el uso de Kruskal-Wallis, Brown-Forsythe y Spearman en lugar de sus equivalentes paramétricos en las secciones 2.6 y 2.7.
+:::
+
 ## 2.6 Análisis bivariado y multicolinealidad
 
 **Correlación de Pearson** (relaciones lineales):
@@ -205,11 +218,16 @@ $$
 
 El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4.
 
-:::{admonition} Pendientes antes de fijar el set final de variables
+**VIF recalculado sobre variables winsorizadas.** Se aplicó la misma winsorización al percentil 1/99 (sección 2.4) a los cuatro ratios y al margen EBITDA, y se recalculó el VIF sobre las 8 variables candidatas ya winsorizadas.
+
+:::{admonition} Resultado
 :class: teal
-- Aplicar winsorización (percentil 1-99) a los cuatro ratios financieros, no solo a las variables de nivel (sección 2.4).
-- Recalcular el VIF sobre esos datos winsorizados — el valor actual (~256.000 en apalancamiento y ROA) está contaminado por outliers de denominador-casi-cero, no refleja multicolinealidad real.
-- Comparar la matriz de Spearman y la de Pearson-winsorizado contra la matriz de Pearson cruda de esta misma sección, para confirmar si la lectura de baja redundancia entre variables se sostiene una vez controlados los outliers.
+Winsorizar resuelve el problema por completo: apalancamiento y ROA caen de $\approx 256.091$ a $1{,}27$ y $1{,}55$ respectivamente, y margen neto / margen EBITDA bajan de $176{,}42$ a $3{,}59$ y $3{,}55$. Las 8 variables candidatas quedan con $VIF < 5$ (el más alto es margen neto con $3{,}59$), confirmando que el problema original era enteramente contaminación por outliers y no multicolinealidad real: ninguna resulta redundante frente a las demás, y las 8 pueden entrar juntas al modelo sin inflar artificialmente sus coeficientes.
+:::
+
+:::{admonition} Pendiente
+:class: teal
+Comparar la matriz de Spearman y la de Pearson-winsorizado (calculadas al inicio de esta sección) contra la matriz de Pearson cruda, para confirmar si la lectura de baja redundancia entre variables se sostiene una vez controlados los outliers.
 :::
 
 ## 2.7 Análisis comparativo por grupos
@@ -231,6 +249,26 @@ Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemi
 - **Terciles de tamaño**: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.
 :::
 
+**Tamaño de efecto — eta-cuadrado basado en H.** El $p$-valor de Kruskal-Wallis no distingue una diferencia real de una diferencia grande cuando $N$ es alto (mismo punto que se retoma con $V$ de Cramér en la sección 2.8); se completa con:
+
+$$
+\eta_H^2 = \frac{H-k+1}{N-k}
+$$
+
+- $k$: número de grupos (periodos) · $N$: tamaño de muestra de la variable.
+
+:::{admonition} Resultado
+:class: teal
+$\eta_H^2 = 0{,}0089$ (EBITDA), $0{,}0081$ (capital de trabajo) y $0{,}0022$ (FCL) — los tres por debajo del umbral de $0{,}01$ que Cohen asocia a un efecto "pequeño". La diferencia entre periodos es estadísticamente real pero de magnitud modesta, más marcada en EBITDA y prácticamente nula en FCL.
+:::
+
+**Corrección de comparaciones múltiples entre las 3 pruebas.** Dunn's corrige con Bonferroni *dentro* de cada variable, pero se corren 3 pruebas de Kruskal-Wallis independientes (una por variable) sin ajuste conjunto entre ellas; se cierra con el procedimiento de Benjamini-Hochberg (FDR):
+
+:::{admonition} Resultado
+:class: teal
+Los tres $p$-valores originales (todos $\approx 0$) siguen significativos tras el ajuste FDR-BH — el chequeo estaba pendiente, pero no cambia ninguna conclusión: ningún resultado dependía de evaluar los tres $p$-valores por separado.
+:::
+
 **Brown-Forsythe** (variante robusta del test de Levene para homogeneidad de varianzas entre grupos, usando la mediana en lugar de la media como centro — más apropiada dada la asimetría extrema documentada en la sección 2.5):
 
 $$
@@ -247,9 +285,14 @@ $$
 
 con el nivel de significancia ajustado por el número de comparaciones ($\alpha/m$, con $m=\binom{k}{2}$ pares) para controlar la inflación del error tipo I al hacer pruebas múltiples.
 
+:::{admonition} Resultado — Brown-Forsythe
+:class: teal
+$W = 11{,}0$ (EBITDA), $29{,}5$ (capital de trabajo) y $6{,}8$ (FCL), los tres con $p \approx 0$: la dispersión también difiere entre periodos, no solo la mediana.
+:::
+
 :::{admonition} Pendiente
 :class: teal
-Brown-Forsythe y Dunn's aún no se han ejecutado sobre el panel real (requieren los archivos fuente); se aplican sobre las mismas tres variables de nivel (EBITDA, capital de trabajo, FCL) y los mismos tres periodos usados en Kruskal-Wallis.
+Dunn's post-hoc ya se ejecutó sobre el panel real, pero una limitación de la celda (en un bucle, Jupyter solo muestra automáticamente la salida de la última iteración) hizo que no quedaran registradas las tablas de $p$-valor por par de periodo para las tres variables; se corregirá la celda para capturar las tres tablas explícitamente y se completará este resultado.
 :::
 
 ## 2.8 Indicadores compuestos de riesgo
@@ -312,15 +355,27 @@ Error contable promedio $\approx 0\%$ (−2,7e-19, ruido de punto flotante; desv
 
 Se analizó también el balance de entradas y salidas del panel año a año (solo 38,0% de los NITs presentes los 8 años), dado que este no es un censo fijo de empresas sino un corte anual de "las más grandes de Colombia": la salida de una empresa del panel puede deberse a reducción de tamaño, fusión o falta de reporte, y **no equivale por sí misma a un evento de insolvencia**.
 
+**Independencia de las observaciones (estructura panel).** Las pruebas de las secciones 2.7 y 2.8 asumen observaciones independientes, pero el panel es empresa-año: 22.521 filas corresponden a solo 4.202 empresas únicas (NIT), con un promedio de 5,36 observaciones por empresa y hasta 8 para las que reportan los 8 años. Ninguna de las dos pruebas corrige por esta repetición (ni con errores estándar agrupados por NIT, ni con un modelo de efectos mixtos), lo que puede inflar el $n$ efectivo y, con este, la significancia estadística.
+
+Como chequeo de robustez, se repitieron Kruskal-Wallis (sección 2.7) y chi-cuadrado (sección 2.8) sobre una muestra de **una fila aleatoria por empresa** ($n=4.202$, observaciones ahora sí independientes):
+
+:::{admonition} Resultado
+:class: teal
+- **Chi-cuadrado (semáforo × periodo) no sobrevive:** $\chi^2$ baja de $25{,}64$ a $6{,}57$ y el $p$-valor sube de $0{,}00004$ a $0{,}160$ — deja de ser significativo al 5%, aunque $V$ de Cramér se mantiene casi igual ($0{,}024 \to 0{,}028$). El $n$ inflado por las repeticiones de empresa era, en parte, el que fabricaba la significancia de esta prueba sobre el panel completo.
+- **Kruskal-Wallis sí sobrevive:** el estadístico $H$ cae proporcionalmente al tamaño de muestra (EBITDA $202{,}6\to64{,}0$; capital de trabajo $183{,}4\to43{,}7$; FCL $52{,}2\to8{,}2$), pero el $p$-valor sigue por debajo de $0{,}05$ en las tres variables, incluida FCL ($p=0{,}016$).
+
+**Conclusión:** la comparación de niveles por periodo (sección 2.7) es robusta a la estructura de panel repetido; la lectura de significancia global del semáforo por periodo (sección 2.8) no lo es, y su resultado más confiable es el tamaño de efecto ($V$ de Cramér $\approx 0{,}02$–$0{,}03$), no el $p$-valor del chi-cuadrado sobre el panel completo. Se recomienda, para la siguiente etapa, usar errores estándar agrupados por NIT o un modelo de efectos mixtos en lugar de esta submuestra, empleada aquí solo como chequeo rápido.
+:::
+
 ## 2.10 Herramientas computacionales
 
 El procesamiento y análisis se realizó en **Python**, utilizando principalmente:
 
 - `pandas` y `numpy`: manipulación, transformación y cálculo de variables.
 - `plotly.express`, `plotly.graph_objects` y `plotly.subplots`: visualizaciones interactivas (histogramas, boxplots, cascadas, mapas coropléticos, series de tiempo).
-- `scipy.stats` (`skew`, `kurtosis`, `kruskal`, `chi2_contingency`, `levene`): estadística descriptiva y pruebas de hipótesis no paramétricas.
+- `scipy.stats` (`skew`, `kurtosis`, `kruskal`, `chi2_contingency`, `levene`, `jarque_bera`): estadística descriptiva y pruebas de hipótesis no paramétricas.
 - `scikit-posthocs` (`posthoc_dunn`): comparaciones post-hoc por pares tras Kruskal-Wallis.
-- `statsmodels` (`variance_inflation_factor`, `proportion_confint`, `add_constant`): diagnóstico de multicolinealidad e intervalos de confianza para proporciones.
+- `statsmodels` (`variance_inflation_factor`, `proportion_confint`, `add_constant`, `multipletests`): diagnóstico de multicolinealidad, intervalos de confianza para proporciones y corrección de comparaciones múltiples (FDR-BH).
 
 ## 2.11 Variables del dataset
 
@@ -331,7 +386,7 @@ El panel consolidado y exportado contiene **22.521 filas × 43 columnas**, con u
 | `anio` | Año de registro del reporte financiero | Numérico (entero) |
 | `nit` | Identificador único de la empresa | Texto |
 | `ebitda`, `capital_trabajo`, `fcl` | Variables ancla de nivel (EBITDA, capital de trabajo, flujo de caja libre) | Numérico continuo, winsorizado 1%/99% (`_wz`) |
-| `roa`, `apalancamiento`, `razon_corriente`, `margen_neto`, `margen_ebitda` | Ratios clásicos de análisis de crédito | Numérico continuo (ratio) |
+| `roa`, `apalancamiento`, `razon_corriente`, `margen_neto`, `margen_ebitda` | Ratios clásicos de análisis de crédito | Numérico continuo (ratio); versión winsorizada 1%/99% disponible (`_wz`) |
 | `escala` | $\log(\text{Total de activos}+1)$ | Numérico continuo |
 | `tamano` | Tercil de tamaño (Pequeña/Mediana/Grande) | Categórico |
 | `ciiu` | Código de sector económico (2 dígitos) | Texto/categórico |
