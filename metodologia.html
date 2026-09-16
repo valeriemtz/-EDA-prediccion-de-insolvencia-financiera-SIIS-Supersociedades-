@@ -371,7 +371,7 @@
             </div>
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fuente-de-datos-y-preprocesamiento">2.1 Fuente de datos y preprocesamiento</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocesamiento-y-construccion-del-panel">2.1 Preprocesamiento y construcción del panel</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-variables-financieras">2.2 Construcción de variables financieras</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-relativas-al-sector">Variables relativas al sector</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#escala-y-terciles-de-tamano">Escala y terciles de tamaño</a></li>
@@ -401,61 +401,99 @@
   <section class="tex2jax_ignore mathjax_ignore" id="metodologia">
 <h1>Metodología<a class="headerlink" href="#metodologia" title="Link to this heading">#</a></h1>
 <p>El presente estudio combina un <strong>análisis exploratorio de datos (EDA)</strong> de corte longitudinal sobre el panel financiero del SIIS (2017-2024) con el diseño de un <strong>modelo de clasificación binaria supervisada</strong> para anticipar el riesgo de insolvencia empresarial (<em>financial distress</em>), siguiendo un esquema <strong>CRISP-DM adaptado</strong>. A diferencia de una descripción puramente narrativa, cada decisión metodológica se documenta aquí junto con su fundamento estadístico formal — la fórmula exacta aplicada, sus supuestos y el resultado obtenido sobre el panel — de modo que el capítulo sirva tanto de bitácora reproducible como de justificación teórica de cada paso.</p>
-<section id="fuente-de-datos-y-preprocesamiento">
-<h2>2.1 Fuente de datos y preprocesamiento<a class="headerlink" href="#fuente-de-datos-y-preprocesamiento" title="Link to this heading">#</a></h2>
-<p>Los datos provienen de los reportes financieros masivos en formato XBRL que la <strong>Superintendencia de Sociedades</strong> centraliza a través del SIIS: Balance General (BS), Estado de Resultados (IS) y Flujo de Efectivo (CF), correspondientes a las ~10.000 empresas más grandes de Colombia, para el periodo <strong>2017-2024</strong> (2025 se excluye por ser un año en curso/incompleto). El uso de reportes bajo estándar XBRL/NIIF, vigente de forma consolidada durante todo el periodo, garantiza consistencia semántica entre empresas y años y reduce el sesgo de comparabilidad frente a normativas contables previas (COLGAAP).</p>
-<p>El preprocesamiento incluyó:</p>
-<ul class="simple">
-<li><p><strong>Depuración de duplicados estructurales</strong>: cada empresa aparece dos veces por fecha de corte (columna <code class="docutils literal notranslate"><span class="pre">Periodo</span></code>: <em>“Periodo Actual”</em> vs. <em>“Periodo Anterior”</em>, este último el dato comparativo del período previo, no una empresa distinta). Un número reducido de NITs por año (entre 7 y ~28) presenta además un corte intermedio adicional (p. ej. septiembre) por haber radicado un reporte extra ese año.</p></li>
-<li><p><strong>Regla de deduplicación</strong>: se conserva únicamente <code class="docutils literal notranslate"><span class="pre">Periodo</span> <span class="pre">=</span> <span class="pre">&quot;Periodo</span> <span class="pre">Actual&quot;</span></code> con corte al 31 de diciembre, respetando el principio de cierre anual del análisis financiero.</p></li>
-<li><p><strong>Construcción del panel consolidado</strong>: cruce interno (<em>inner join</em>) de BS + IS + CF por NIT dentro de cada año — solo se conservan empresas que reportaron los tres estados financieros ese año.</p></li>
-</ul>
-<p><strong>Resultado</strong>: panel final de <strong>22.521 filas empresa-año, correspondientes a 4.202 NITs únicos</strong>, validado comparando, para cada estado financiero y año, el número de filas antes y después de depurar (<code class="docutils literal notranslate"><span class="pre">filas_tras_dedup</span></code> = <code class="docutils literal notranslate"><span class="pre">nit_unicos_crudo</span></code> en los 8 años).</p>
+<section id="preprocesamiento-y-construccion-del-panel">
+<h2>2.1 Preprocesamiento y construcción del panel<a class="headerlink" href="#preprocesamiento-y-construccion-del-panel" title="Link to this heading">#</a></h2>
+<p>Sobre la base descrita en la sección 1.2, el procesamiento parte de los reportes crudos en formato <strong>XBRL</strong> (Balance General, Estado de Resultados y Flujo de Efectivo). El uso de este estándar — vigente de forma consolidada en todo el periodo 2017-2024 — garantiza consistencia semántica entre empresas y años, y reduce el sesgo de comparabilidad frente a normativas contables previas (COLGAAP); 2025 se excluye por ser un año en curso/incompleto.</p>
+<p>A partir de los archivos crudos se aplicaron tres pasos de depuración:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Paso</p></th>
+<th class="head"><p>Regla aplicada</p></th>
+<th class="head"><p>Motivo</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>1. Duplicados estructurales</strong></p></td>
+<td><p>Cada empresa aparece dos veces por fecha de corte (columna <code class="docutils literal notranslate"><span class="pre">Periodo</span></code>: <em>“Periodo Actual”</em> vs. <em>“Periodo Anterior”</em>, este último el dato comparativo del período previo, no una empresa distinta). Un número reducido de NITs por año (entre 7 y ~28) presenta además un corte intermedio adicional (p. ej. septiembre) por haber radicado un reporte extra ese año.</p></td>
+<td><p>Evitar duplicar empresa-año</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>2. Deduplicación</strong></p></td>
+<td><p>Se conserva únicamente <code class="docutils literal notranslate"><span class="pre">Periodo</span> <span class="pre">=</span> <span class="pre">&quot;Periodo</span> <span class="pre">Actual&quot;</span></code> con corte al 31 de diciembre</p></td>
+<td><p>Respetar el principio de cierre anual</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>3. Consolidación</strong></p></td>
+<td><p>Cruce interno (<em>inner join</em>) de BS + IS + CF por NIT dentro de cada año</p></td>
+<td><p>Solo empresas que reportaron los tres estados financieros ese año</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Validación</strong>: se comparó, para cada estado financiero y año, el número de filas antes y después de depurar (<code class="docutils literal notranslate"><span class="pre">filas_tras_dedup</span></code> = <code class="docutils literal notranslate"><span class="pre">nit_unicos_crudo</span></code> en los 8 años), confirmando la consistencia del panel resultante frente a la cifra reportada en la sección 1.2.</p>
 </section>
 <section id="construccion-de-variables-financieras">
 <h2>2.2 Construcción de variables financieras<a class="headerlink" href="#construccion-de-variables-financieras" title="Link to this heading">#</a></h2>
-<p>El uso de <strong>variables relativas (ratios)</strong> en lugar de niveles absolutos en COP se justifica por la heterogeneidad de escala del panel (empresas pequeñas y gigantes conviviendo en el mismo corte) y por ser el estándar en analítica de crédito: los ratios son <strong>invariantes a la escala</strong>, a diferencia de los niveles absolutos. Siguiendo las cuatro dimensiones clásicas del análisis de crédito (liquidez, endeudamiento, rentabilidad y flujo de caja), se calcularon las siguientes variables:</p>
-<p><strong>Capital de trabajo (CT)</strong>
-$<span class="math notranslate nohighlight">\(
-CT = \text{Activos corrientes} - \text{Pasivos corrientes}
-\)</span>$</p>
-<p><strong>EBITDA</strong>
-$<span class="math notranslate nohighlight">\(
-EBITDA = \text{Ganancia operacional} + \text{Depreciación y amortización}
-\)</span>$</p>
-<p><strong>Flujo de caja libre (FCL)</strong>
-$<span class="math notranslate nohighlight">\(
-FCL = CFO - \left( \lvert CapEx_{PPE} \rvert + \lvert CapEx_{Intangibles} \rvert \right)
-\)</span><span class="math notranslate nohighlight">\(
-donde \)</span>CFO$ es el flujo de efectivo de las actividades de operación (<em>Cash Flow from Operating Activities</em>).</p>
-<p><strong>Margen EBITDA</strong>
-$<span class="math notranslate nohighlight">\(
-\text{Margen}_{EBITDA} = \frac{EBITDA}{\text{Ingresos operacionales}} \times 100
-\)</span>$</p>
-<p><strong>Margen neto</strong>
-$<span class="math notranslate nohighlight">\(
-\text{Margen}_{neto} = \frac{\text{Ganancia (pérdida) neta}}{\text{Ingresos operacionales}} \times 100
-\)</span>$</p>
-<p><strong>ROA (<em>Return on Assets</em>)</strong>
-$<span class="math notranslate nohighlight">\(
-ROA = \frac{\text{Ganancia (pérdida) neta}}{\text{Total de activos}} \times 100
-\)</span>$</p>
-<p><strong>Apalancamiento</strong>
-$<span class="math notranslate nohighlight">\(
-\text{Apalancamiento} = \frac{\text{Total pasivos}}{\text{Total de activos}} \times 100
-\)</span>$</p>
-<p><strong>Razón corriente</strong>
-$<span class="math notranslate nohighlight">\(
-\text{Razón corriente} = \frac{\text{Activos corrientes}}{\text{Pasivos corrientes}}
-\)</span>$</p>
-<p><strong>Cobertura de intereses</strong>
-$<span class="math notranslate nohighlight">\(
-\text{Cobertura de intereses} = \frac{\text{Ganancia por actividades de operación}}{\text{Costos financieros}}
-\)</span>$</p>
-<p><strong>Cobertura operativa</strong>
-$<span class="math notranslate nohighlight">\(
-\text{Cobertura operativa} = \frac{CFO}{\text{Pasivos corrientes totales}}
-\)</span>$</p>
+<p>El uso de <strong>variables relativas (ratios)</strong> en lugar de niveles absolutos en COP se justifica por la heterogeneidad de escala del panel (empresas pequeñas y gigantes conviviendo en el mismo corte) y por ser el estándar en analítica de crédito: los ratios son <strong>invariantes a la escala</strong>, a diferencia de los niveles absolutos. Siguiendo las cuatro dimensiones clásicas del análisis de crédito (liquidez, endeudamiento, rentabilidad y flujo de caja), se calcularon las variables ancla de nivel y, a partir de ellas, los ratios clásicos.</p>
+<p><strong>Variables ancla (niveles).</strong> Tres variables en COP sirven de base para el resto de indicadores:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Fórmula</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Capital de trabajo (CT)</p></td>
+<td><p><span class="math notranslate nohighlight">\(CT = \text{Activos corrientes} - \text{Pasivos corrientes}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>EBITDA</p></td>
+<td><p><span class="math notranslate nohighlight">\(EBITDA = \text{Ganancia operacional} + \text{Depreciación y amortización}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Flujo de caja libre (FCL)</p></td>
+<td><p><span class="math notranslate nohighlight">\(FCL = CFO - \left(\lvert CapEx_{PPE}\rvert + \lvert CapEx_{Intangibles}\rvert\right)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>donde <span class="math notranslate nohighlight">\(CFO\)</span> es el flujo de efectivo de las actividades de operación (<em>Cash Flow from Operating Activities</em>).</p>
+<p><strong>Ratios clásicos de análisis de crédito.</strong> Construidos a partir de las variables ancla y de las cuatro dimensiones clásicas:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Dimensión</p></th>
+<th class="head"><p>Ratio</p></th>
+<th class="head"><p>Fórmula</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Rentabilidad</p></td>
+<td><p>Margen EBITDA</p></td>
+<td><p><span class="math notranslate nohighlight">\(\dfrac{EBITDA}{\text{Ingresos operacionales}}\times 100\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Rentabilidad</p></td>
+<td><p>Margen neto</p></td>
+<td><p><span class="math notranslate nohighlight">\(\dfrac{\text{Ganancia (pérdida) neta}}{\text{Ingresos operacionales}}\times 100\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Rentabilidad</p></td>
+<td><p>ROA (<em>Return on Assets</em>)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\dfrac{\text{Ganancia (pérdida) neta}}{\text{Total de activos}}\times 100\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Endeudamiento</p></td>
+<td><p>Apalancamiento</p></td>
+<td><p><span class="math notranslate nohighlight">\(\dfrac{\text{Total pasivos}}{\text{Total de activos}}\times 100\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Liquidez</p></td>
+<td><p>Razón corriente</p></td>
+<td><p><span class="math notranslate nohighlight">\(\dfrac{\text{Activos corrientes}}{\text{Pasivos corrientes}}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Flujo de caja</p></td>
+<td><p>Cobertura de intereses</p></td>
+<td><p><span class="math notranslate nohighlight">\(\dfrac{\text{Ganancia por actividades de operación}}{\text{Costos financieros}}\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Flujo de caja</p></td>
+<td><p>Cobertura operativa</p></td>
+<td><p><span class="math notranslate nohighlight">\(\dfrac{CFO}{\text{Pasivos corrientes totales}}\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <section id="variables-relativas-al-sector">
 <h3>Variables relativas al sector<a class="headerlink" href="#variables-relativas-al-sector" title="Link to this heading">#</a></h3>
 <p>Para no penalizar a una empresa solo por operar en un sector de márgenes estructuralmente bajos, se calculó la diferencia entre el valor de cada empresa y la mediana de su sector (CIIU 2 dígitos) en el mismo año:
@@ -775,7 +813,7 @@ y_{i,\,t+1} =
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fuente-de-datos-y-preprocesamiento">2.1 Fuente de datos y preprocesamiento</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#preprocesamiento-y-construccion-del-panel">2.1 Preprocesamiento y construcción del panel</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-variables-financieras">2.2 Construcción de variables financieras</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-relativas-al-sector">Variables relativas al sector</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#escala-y-terciles-de-tamano">Escala y terciles de tamaño</a></li>
