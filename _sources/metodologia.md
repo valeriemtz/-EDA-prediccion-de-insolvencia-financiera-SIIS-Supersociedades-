@@ -1,10 +1,10 @@
 # Metodología
 
-El presente estudio combina un **análisis exploratorio de datos (EDA)** de corte longitudinal sobre el panel financiero del SIIS (2017-2024) con el diseño de un **modelo de clasificación binaria supervisada** para anticipar el riesgo de insolvencia empresarial (*financial distress*), siguiendo un esquema **CRISP-DM adaptado**. A diferencia de una descripción puramente narrativa, cada decisión metodológica se documenta aquí junto con su fundamento estadístico formal — la fórmula exacta aplicada, sus supuestos y el resultado obtenido sobre el panel — de modo que el capítulo sirva tanto de bitácora reproducible como de justificación teórica de cada paso.
+El presente estudio combina un **análisis exploratorio de datos (EDA)** de corte longitudinal sobre el panel financiero del SIIS (2017-2024) con el diseño de un **modelo de clasificación binaria supervisada** para anticipar el riesgo de insolvencia empresarial (*financial distress*), siguiendo un esquema **CRISP-DM adaptado**. A diferencia de una descripción puramente narrativa, cada decisión metodológica se documenta aquí junto con su fundamento estadístico formal, la fórmula exacta aplicada, sus supuestos y el resultado obtenido sobre el panel, de modo que el capítulo sirva tanto de bitácora reproducible como de justificación teórica de cada paso.
 
 ## 2.1 Preprocesamiento y construcción del panel
 
-Sobre la base descrita en la sección 1.2, el procesamiento parte de los reportes crudos en formato **XBRL** (Balance General, Estado de Resultados y Flujo de Efectivo). El uso de este estándar — vigente de forma consolidada en todo el periodo 2017-2024 — garantiza consistencia semántica entre empresas y años, y reduce el sesgo de comparabilidad frente a normativas contables previas (COLGAAP); 2025 se excluye por ser un año en curso/incompleto.
+Sobre la base descrita en la sección 1.2, el procesamiento parte de los reportes crudos en formato **XBRL** (Balance General, Estado de Resultados y Flujo de Efectivo). El uso de este estándar vigente de forma consolidada en todo el periodo 2017-2024 garantiza consistencia semántica entre empresas y años, y reduce el sesgo de comparabilidad frente a normativas contables previas (COLGAAP); 2025 se excluye por ser un año en curso/incompleto.
 
 A partir de los archivos crudos se aplicaron tres pasos de depuración:
 
@@ -79,7 +79,7 @@ $$
 
 :::{admonition} Resultado
 :class: teal
-Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es **margen neto = 7,10%**, muy por encima del resto de ratios (< 0,4%), clasificado como **MNAR**: el faltante depende de que los ingresos operacionales sean cero — el propio valor no observado (el ratio) está relacionado con la causa de su ausencia — por lo que no es ignorable estadísticamente.
+Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es **margen neto = 7,10%**, muy por encima del resto de ratios (< 0,4%), clasificado como **MNAR**: el faltante depende de que los ingresos operacionales sean cero, el propio valor no observado (el ratio) está relacionado con la causa de su ausencia, por lo que no es ignorable estadísticamente.
 :::
 
 **Regla adoptada**: los ratios con denominador cero o nulo quedan como `NaN` (nunca se imputan con 0, ya que un ratio con denominador cero no es "cero", es "no calculable"); los faltantes residuales se excluyen solo del análisis de esa variable puntual, nunca eliminando la fila completa del panel.
@@ -108,7 +108,7 @@ Q_{0.99} & \text{si } x_i > Q_{0.99}
 \end{cases}
 $$
 
-A diferencia de eliminar filas, la winsorización preserva el tamaño de la muestra y no desplaza las medias — confirmado empíricamente (EBITDA, capital de trabajo y FCL mantienen la misma media antes y después del recorte).
+A diferencia de eliminar filas, la winsorización preserva el tamaño de la muestra y no desplaza las medias, confirmado empíricamente (EBITDA, capital de trabajo y FCL mantienen la misma media antes y después del recorte).
 
 ## 2.5 Estadística descriptiva y análisis de distribución
 
@@ -156,7 +156,7 @@ $$
 \hat{F}_n(x) = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}\{x_i \le x\}
 $$
 
-- $\mathbb{1}\{\cdot\}$: función indicadora. El punto donde la ECDF cruza $x=0$ corresponde directamente al porcentaje de empresas con esa variable en negativo — la lectura usada en la sección de señales de estrés financiero.
+- $\mathbb{1}\{\cdot\}$: función indicadora. El punto donde la ECDF cruza $x=0$ corresponde directamente al porcentaje de empresas con esa variable en negativo, la lectura usada en la sección de señales de estrés financiero.
 
 ## 2.6 Análisis bivariado y multicolinealidad
 
@@ -213,7 +213,7 @@ Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemi
 
 ## 2.8 Indicadores compuestos de riesgo
 
-**Semáforo financiero.** Se clasificó cada empresa-año en tres estados — *sano*, *alerta* (una señal negativa) y *riesgo alto* (dos o más señales negativas simultáneas) — y se evaluó su asociación con el periodo mediante:
+**Semáforo financiero.** Se clasificó cada empresa-año en tres estados *sano*, *alerta* (una señal negativa) y *riesgo alto* (dos o más señales negativas simultáneas)  y se evaluó su asociación con el periodo mediante:
 
 **Prueba chi-cuadrado de independencia:**
 $$

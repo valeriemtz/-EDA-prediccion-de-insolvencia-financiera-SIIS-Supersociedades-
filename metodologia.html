@@ -399,10 +399,10 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="metodologia">
 <h1>Metodología<a class="headerlink" href="#metodologia" title="Link to this heading">#</a></h1>
-<p>El presente estudio combina un <strong>análisis exploratorio de datos (EDA)</strong> de corte longitudinal sobre el panel financiero del SIIS (2017-2024) con el diseño de un <strong>modelo de clasificación binaria supervisada</strong> para anticipar el riesgo de insolvencia empresarial (<em>financial distress</em>), siguiendo un esquema <strong>CRISP-DM adaptado</strong>. A diferencia de una descripción puramente narrativa, cada decisión metodológica se documenta aquí junto con su fundamento estadístico formal — la fórmula exacta aplicada, sus supuestos y el resultado obtenido sobre el panel — de modo que el capítulo sirva tanto de bitácora reproducible como de justificación teórica de cada paso.</p>
+<p>El presente estudio combina un <strong>análisis exploratorio de datos (EDA)</strong> de corte longitudinal sobre el panel financiero del SIIS (2017-2024) con el diseño de un <strong>modelo de clasificación binaria supervisada</strong> para anticipar el riesgo de insolvencia empresarial (<em>financial distress</em>), siguiendo un esquema <strong>CRISP-DM adaptado</strong>. A diferencia de una descripción puramente narrativa, cada decisión metodológica se documenta aquí junto con su fundamento estadístico formal, la fórmula exacta aplicada, sus supuestos y el resultado obtenido sobre el panel, de modo que el capítulo sirva tanto de bitácora reproducible como de justificación teórica de cada paso.</p>
 <section id="preprocesamiento-y-construccion-del-panel">
 <h2>2.1 Preprocesamiento y construcción del panel<a class="headerlink" href="#preprocesamiento-y-construccion-del-panel" title="Link to this heading">#</a></h2>
-<p>Sobre la base descrita en la sección 1.2, el procesamiento parte de los reportes crudos en formato <strong>XBRL</strong> (Balance General, Estado de Resultados y Flujo de Efectivo). El uso de este estándar — vigente de forma consolidada en todo el periodo 2017-2024 — garantiza consistencia semántica entre empresas y años, y reduce el sesgo de comparabilidad frente a normativas contables previas (COLGAAP); 2025 se excluye por ser un año en curso/incompleto.</p>
+<p>Sobre la base descrita en la sección 1.2, el procesamiento parte de los reportes crudos en formato <strong>XBRL</strong> (Balance General, Estado de Resultados y Flujo de Efectivo). El uso de este estándar vigente de forma consolidada en todo el periodo 2017-2024 garantiza consistencia semántica entre empresas y años, y reduce el sesgo de comparabilidad frente a normativas contables previas (COLGAAP); 2025 se excluye por ser un año en curso/incompleto.</p>
 <p>A partir de los archivos crudos se aplicaron tres pasos de depuración:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -529,7 +529,7 @@ $<span class="math notranslate nohighlight">\(
 \)</span>$</p>
 <div class="teal admonition">
 <p class="admonition-title">Resultado</p>
-<p>Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es <strong>margen neto = 7,10%</strong>, muy por encima del resto de ratios (&lt; 0,4%), clasificado como <strong>MNAR</strong>: el faltante depende de que los ingresos operacionales sean cero — el propio valor no observado (el ratio) está relacionado con la causa de su ausencia — por lo que no es ignorable estadísticamente.</p>
+<p>Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es <strong>margen neto = 7,10%</strong>, muy por encima del resto de ratios (&lt; 0,4%), clasificado como <strong>MNAR</strong>: el faltante depende de que los ingresos operacionales sean cero, el propio valor no observado (el ratio) está relacionado con la causa de su ausencia, por lo que no es ignorable estadísticamente.</p>
 </div>
 <p><strong>Regla adoptada</strong>: los ratios con denominador cero o nulo quedan como <code class="docutils literal notranslate"><span class="pre">NaN</span></code> (nunca se imputan con 0, ya que un ratio con denominador cero no es “cero”, es “no calculable”); los faltantes residuales se excluyen solo del análisis de esa variable puntual, nunca eliminando la fila completa del panel.</p>
 </section>
@@ -554,7 +554,7 @@ x_i &amp; \text{si } Q_{0.01} \le x_i \le Q_{0.99} \\
 Q_{0.99} &amp; \text{si } x_i &gt; Q_{0.99}
 \end{cases}
 \)</span>$</p>
-<p>A diferencia de eliminar filas, la winsorización preserva el tamaño de la muestra y no desplaza las medias — confirmado empíricamente (EBITDA, capital de trabajo y FCL mantienen la misma media antes y después del recorte).</p>
+<p>A diferencia de eliminar filas, la winsorización preserva el tamaño de la muestra y no desplaza las medias, confirmado empíricamente (EBITDA, capital de trabajo y FCL mantienen la misma media antes y después del recorte).</p>
 </section>
 <section id="estadistica-descriptiva-y-analisis-de-distribucion">
 <h2>2.5 Estadística descriptiva y análisis de distribución<a class="headerlink" href="#estadistica-descriptiva-y-analisis-de-distribucion" title="Link to this heading">#</a></h2>
@@ -614,7 +614,7 @@ $<span class="math notranslate nohighlight">\(
 \hat{F}_n(x) = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}\{x_i \le x\}
 \)</span>$</p>
 <ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\mathbb{1}\{\cdot\}\)</span>: función indicadora. El punto donde la ECDF cruza <span class="math notranslate nohighlight">\(x=0\)</span> corresponde directamente al porcentaje de empresas con esa variable en negativo — la lectura usada en la sección de señales de estrés financiero.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbb{1}\{\cdot\}\)</span>: función indicadora. El punto donde la ECDF cruza <span class="math notranslate nohighlight">\(x=0\)</span> corresponde directamente al porcentaje de empresas con esa variable en negativo, la lectura usada en la sección de señales de estrés financiero.</p></li>
 </ul>
 </section>
 <section id="analisis-bivariado-y-multicolinealidad">
@@ -673,7 +673,7 @@ H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 </section>
 <section id="indicadores-compuestos-de-riesgo">
 <h2>2.8 Indicadores compuestos de riesgo<a class="headerlink" href="#indicadores-compuestos-de-riesgo" title="Link to this heading">#</a></h2>
-<p><strong>Semáforo financiero.</strong> Se clasificó cada empresa-año en tres estados — <em>sano</em>, <em>alerta</em> (una señal negativa) y <em>riesgo alto</em> (dos o más señales negativas simultáneas) — y se evaluó su asociación con el periodo mediante:</p>
+<p><strong>Semáforo financiero.</strong> Se clasificó cada empresa-año en tres estados <em>sano</em>, <em>alerta</em> (una señal negativa) y <em>riesgo alto</em> (dos o más señales negativas simultáneas)  y se evaluó su asociación con el periodo mediante:</p>
 <p><strong>Prueba chi-cuadrado de independencia:</strong>
 $<span class="math notranslate nohighlight">\(
 \chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}
