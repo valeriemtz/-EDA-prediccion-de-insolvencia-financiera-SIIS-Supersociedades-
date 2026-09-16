@@ -26,13 +26,14 @@
 .admonition.teal table {
   border-collapse: collapse;
   width: 100%;
+  margin: 16px 0;
 }
 .admonition.teal table th,
 .admonition.teal table td {
   background-color: #E6F5F3 !important;
   color: #003733 !important;
   border: 1px solid #00695C;
-  padding: 6px 10px;
+  padding: 10px 14px;
 }
 .admonition.teal table th {
   background-color: #CDEAE6 !important;
