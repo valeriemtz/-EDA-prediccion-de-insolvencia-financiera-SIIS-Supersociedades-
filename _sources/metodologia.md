@@ -272,7 +272,7 @@ $\eta_H^2 = 0{,}0089$ (EBITDA), $0{,}0081$ (capital de trabajo) y $0{,}0022$ (FC
 
 :::{admonition} Resultado
 :class: teal
-Los tres $p$-valores originales (todos $\approx 0$) siguen significativos tras el ajuste FDR-BH; el chequeo estaba pendiente, pero no cambia ninguna conclusión: ningún resultado dependía de evaluar los tres $p$-valores por separado.
+Los tres $p$-valores originales (todos $\approx 0$) siguen significativos tras el ajuste FDR-BH; ningún resultado dependía de evaluar los tres $p$-valores por separado.
 :::
 
 **Brown-Forsythe** (variante robusta del test de Levene para homogeneidad de varianzas entre grupos, usando la mediana en lugar de la media como centro, más apropiada dada la asimetría extrema documentada en la sección 2.5):
@@ -298,7 +298,7 @@ $W = 11{,}0$ (EBITDA), $29{,}5$ (capital de trabajo) y $6{,}8$ (FCL), los tres c
 
 :::{admonition} Resultado: Dunn's post-hoc
 :class: teal
-Con la celda corregida (visualización explícita de las tres tablas dentro del bucle, precisión a 3 decimales), los $p$-valores ajustados por Bonferroni para cada par de periodos son:
+Los $p$-valores ajustados por Bonferroni para cada par de periodos son:
 
 | Variable | Pre-pandemia vs. Pandemia | Pre-pandemia vs. Post-pandemia | Pandemia vs. Post-pandemia |
 |---|---|---|---|
@@ -311,7 +311,7 @@ Con la celda corregida (visualización explícita de las tres tablas dentro del 
 
 Esto es coherente con el tamaño de efecto de la sección anterior: FCL tenía el $\eta_H^2$ más bajo de las tres variables (0,0022), y el post-hoc muestra por qué: su diferencia entre periodos está concentrada casi enteramente en el quiebre pre-pandemia vs. resto, no en una trayectoria de recuperación posterior a la pandemia como sí ocurre (de forma medible) en EBITDA y capital de trabajo.
 
-*Nota de precisión:* con 3 decimales, los valores de EBITDA, capital de trabajo y FCL (salvo Pandemia vs. Post-pandemia en FCL) quedan por debajo de $0{,}001$ en la salida original del notebook; se reportan aquí como $0{,}000$ siguiendo ese mismo redondeo, dado el tamaño de muestra ($N>22.000$).
+*Nota de precisión:* con 3 decimales, los valores de EBITDA, capital de trabajo y FCL (salvo Pandemia vs. Post-pandemia en FCL) quedan por debajo de $0{,}001$; se reportan aquí como $0{,}000$ siguiendo ese redondeo, dado el tamaño de muestra ($N>22.000$).
 :::
 
 ## 2.8 Indicadores compuestos de riesgo

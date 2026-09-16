@@ -716,7 +716,7 @@ H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 <p><strong>Corrección de comparaciones múltiples entre las 3 pruebas.</strong> Dunn’s corrige con Bonferroni <em>dentro</em> de cada variable, pero se corren 3 pruebas de Kruskal-Wallis independientes (una por variable) sin ajuste conjunto entre ellas; se cierra con el procedimiento de Benjamini-Hochberg (FDR):</p>
 <div class="teal admonition">
 <p class="admonition-title">Resultado</p>
-<p>Los tres <span class="math notranslate nohighlight">\(p\)</span>-valores originales (todos <span class="math notranslate nohighlight">\(\approx 0\)</span>) siguen significativos tras el ajuste FDR-BH; el chequeo estaba pendiente, pero no cambia ninguna conclusión: ningún resultado dependía de evaluar los tres <span class="math notranslate nohighlight">\(p\)</span>-valores por separado.</p>
+<p>Los tres <span class="math notranslate nohighlight">\(p\)</span>-valores originales (todos <span class="math notranslate nohighlight">\(\approx 0\)</span>) siguen significativos tras el ajuste FDR-BH; ningún resultado dependía de evaluar los tres <span class="math notranslate nohighlight">\(p\)</span>-valores por separado.</p>
 </div>
 <p><strong>Brown-Forsythe</strong> (variante robusta del test de Levene para homogeneidad de varianzas entre grupos, usando la mediana en lugar de la media como centro, más apropiada dada la asimetría extrema documentada en la sección 2.5):</p>
 <div class="math notranslate nohighlight">
@@ -736,7 +736,7 @@ z = \frac{\bar{R}_i - \bar{R}_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\d
 </div>
 <div class="teal admonition">
 <p class="admonition-title">Resultado: Dunn’s post-hoc</p>
-<p>Con la celda corregida (visualización explícita de las tres tablas dentro del bucle, precisión a 3 decimales), los <span class="math notranslate nohighlight">\(p\)</span>-valores ajustados por Bonferroni para cada par de periodos son:</p>
+<p>Los <span class="math notranslate nohighlight">\(p\)</span>-valores ajustados por Bonferroni para cada par de periodos son:</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Variable</p></th>
@@ -769,7 +769,7 @@ z = \frac{\bar{R}_i - \bar{R}_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\d
 <li><p><strong>FCL:</strong> Pre-pandemia difiere de forma significativa de Pandemia y de Post-pandemia (<span class="math notranslate nohighlight">\(p &lt; 0{,}05\)</span> en ambos casos), pero <strong>Pandemia y Post-pandemia no son distinguibles entre sí</strong> (<span class="math notranslate nohighlight">\(p = 0{,}103\)</span>, por encima del umbral usual de <span class="math notranslate nohighlight">\(0{,}05\)</span>).</p></li>
 </ul>
 <p>Esto es coherente con el tamaño de efecto de la sección anterior: FCL tenía el <span class="math notranslate nohighlight">\(\eta_H^2\)</span> más bajo de las tres variables (0,0022), y el post-hoc muestra por qué: su diferencia entre periodos está concentrada casi enteramente en el quiebre pre-pandemia vs. resto, no en una trayectoria de recuperación posterior a la pandemia como sí ocurre (de forma medible) en EBITDA y capital de trabajo.</p>
-<p><em>Nota de precisión:</em> con 3 decimales, los valores de EBITDA, capital de trabajo y FCL (salvo Pandemia vs. Post-pandemia en FCL) quedan por debajo de <span class="math notranslate nohighlight">\(0{,}001\)</span> en la salida original del notebook; se reportan aquí como <span class="math notranslate nohighlight">\(0{,}000\)</span> siguiendo ese mismo redondeo, dado el tamaño de muestra (<span class="math notranslate nohighlight">\(N&gt;22.000\)</span>).</p>
+<p><em>Nota de precisión:</em> con 3 decimales, los valores de EBITDA, capital de trabajo y FCL (salvo Pandemia vs. Post-pandemia en FCL) quedan por debajo de <span class="math notranslate nohighlight">\(0{,}001\)</span>; se reportan aquí como <span class="math notranslate nohighlight">\(0{,}000\)</span> siguiendo ese redondeo, dado el tamaño de muestra (<span class="math notranslate nohighlight">\(N&gt;22.000\)</span>).</p>
 </div>
 </section>
 <section id="indicadores-compuestos-de-riesgo">
