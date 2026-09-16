@@ -26,7 +26,8 @@ Este repositorio contiene el análisis exploratorio y la documentación del proy
 ## Estructura del repositorio
 
 ```
-├── 01_introduccion.md         # Introducción y marco teórico del estudio
+├── introduccion.md            # Introducción y marco teórico del estudio
+├── metodologia.md             # Metodología: datos, preprocesamiento, EDA y diseño del modelo (CRISP-DM)
 ├── EDA_Insolvencia_SIIS.ipynb # Notebook analítico interactivo (Python, Plotly)
 ├── referencias.md             # Página de bibliografía (generada desde references.bib)
 ├── references.bib             # Referencias en formato BibTeX
