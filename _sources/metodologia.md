@@ -298,14 +298,18 @@ $W = 11{,}0$ (EBITDA), $29{,}5$ (capital de trabajo) y $6{,}8$ (FCL), los tres c
 
 :::{admonition} Resultado — Dunn's post-hoc
 :class: teal
-Con la celda corregida (visualización explícita de las tres tablas dentro del bucle), los $p$-valores ajustados por Bonferroni para cada par de periodos son:
+Con la celda corregida (visualización explícita de las tres tablas dentro del bucle, precisión a 3 decimales), los $p$-valores ajustados por Bonferroni para cada par de periodos son:
 
-- **EBITDA y capital de trabajo:** los tres pares de periodos difieren entre sí de forma significativa ($p < 0{,}05$ en Pre-pandemia vs. Pandemia, Pre-pandemia vs. Post-pandemia y Pandemia vs. Post-pandemia) — cada periodo tiene una mediana distinta de los otros dos.
-- **FCL:** Pre-pandemia difiere de forma significativa de Pandemia y de Post-pandemia ($p < 0{,}05$ en ambos casos), pero **Pandemia y Post-pandemia no son distinguibles entre sí** ($p \approx 0{,}1$, por encima del umbral usual de $0{,}05$).
+| Variable | Pre-pandemia vs. Pandemia | Pre-pandemia vs. Post-pandemia | Pandemia vs. Post-pandemia |
+|---|---|---|---|
+| EBITDA | $0{,}002$ | $0{,}000$ | $0{,}000$ |
+| Capital de trabajo | $0{,}000$ | $0{,}000$ | $0{,}000$ |
+| FCL | $0{,}000$ | $0{,}000$ | $0{,}103$ |
+
+- **EBITDA y capital de trabajo:** los tres pares de periodos difieren entre sí de forma significativa ($p < 0{,}05$ en los tres pares) — cada periodo tiene una mediana distinta de los otros dos.
+- **FCL:** Pre-pandemia difiere de forma significativa de Pandemia y de Post-pandemia ($p < 0{,}001$ en ambos casos), pero **Pandemia y Post-pandemia no son distinguibles entre sí** ($p = 0{,}103$, por encima del umbral de $0{,}05$).
 
 Esto es coherente con el tamaño de efecto de la sección anterior: FCL tenía el $\eta_H^2$ más bajo de las tres variables (0,0022), y el post-hoc muestra por qué — su diferencia entre periodos está concentrada casi enteramente en el quiebre pre-pandemia vs. resto, no en una trayectoria de recuperación posterior a la pandemia como sí ocurre (de forma medible) en EBITDA y capital de trabajo.
-
-*Nota de precisión:* la tabla se despliega con el formato de `tabla_estilo` (1 decimal), por lo que los $p$-valores mostrados como $0{,}0}$ son valores por debajo de ese redondeo — probablemente muy cercanos a cero dado el tamaño de muestra ($N>22.000$) — y no se puede reportar aquí su magnitud exacta sin ajustar la precisión de despliegue en el notebook.
 :::
 
 ## 2.8 Indicadores compuestos de riesgo

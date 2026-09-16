@@ -736,13 +736,39 @@ z = \frac{\bar{R}_i - \bar{R}_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\d
 </div>
 <div class="teal admonition">
 <p class="admonition-title">Resultado — Dunn’s post-hoc</p>
-<p>Con la celda corregida (visualización explícita de las tres tablas dentro del bucle), los <span class="math notranslate nohighlight">\(p\)</span>-valores ajustados por Bonferroni para cada par de periodos son:</p>
+<p>Con la celda corregida (visualización explícita de las tres tablas dentro del bucle, precisión a 3 decimales), los <span class="math notranslate nohighlight">\(p\)</span>-valores ajustados por Bonferroni para cada par de periodos son:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Pre-pandemia vs. Pandemia</p></th>
+<th class="head"><p>Pre-pandemia vs. Post-pandemia</p></th>
+<th class="head"><p>Pandemia vs. Post-pandemia</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>EBITDA</p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}002\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}000\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}000\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Capital de trabajo</p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}000\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}000\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}000\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>FCL</p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}000\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}000\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(0{,}103\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <ul class="simple">
-<li><p><strong>EBITDA y capital de trabajo:</strong> los tres pares de periodos difieren entre sí de forma significativa (<span class="math notranslate nohighlight">\(p &lt; 0{,}05\)</span> en Pre-pandemia vs. Pandemia, Pre-pandemia vs. Post-pandemia y Pandemia vs. Post-pandemia) — cada periodo tiene una mediana distinta de los otros dos.</p></li>
-<li><p><strong>FCL:</strong> Pre-pandemia difiere de forma significativa de Pandemia y de Post-pandemia (<span class="math notranslate nohighlight">\(p &lt; 0{,}05\)</span> en ambos casos), pero <strong>Pandemia y Post-pandemia no son distinguibles entre sí</strong> (<span class="math notranslate nohighlight">\(p \approx 0{,}1\)</span>, por encima del umbral usual de <span class="math notranslate nohighlight">\(0{,}05\)</span>).</p></li>
+<li><p><strong>EBITDA y capital de trabajo:</strong> los tres pares de periodos difieren entre sí de forma significativa (<span class="math notranslate nohighlight">\(p &lt; 0{,}05\)</span> en los tres pares) — cada periodo tiene una mediana distinta de los otros dos.</p></li>
+<li><p><strong>FCL:</strong> Pre-pandemia difiere de forma significativa de Pandemia y de Post-pandemia (<span class="math notranslate nohighlight">\(p &lt; 0{,}001\)</span> en ambos casos), pero <strong>Pandemia y Post-pandemia no son distinguibles entre sí</strong> (<span class="math notranslate nohighlight">\(p = 0{,}103\)</span>, por encima del umbral de <span class="math notranslate nohighlight">\(0{,}05\)</span>).</p></li>
 </ul>
 <p>Esto es coherente con el tamaño de efecto de la sección anterior: FCL tenía el <span class="math notranslate nohighlight">\(\eta_H^2\)</span> más bajo de las tres variables (0,0022), y el post-hoc muestra por qué — su diferencia entre periodos está concentrada casi enteramente en el quiebre pre-pandemia vs. resto, no en una trayectoria de recuperación posterior a la pandemia como sí ocurre (de forma medible) en EBITDA y capital de trabajo.</p>
-<p><em>Nota de precisión:</em> la tabla se despliega con el formato de <code class="docutils literal notranslate"><span class="pre">tabla_estilo</span></code> (1 decimal), por lo que los <span class="math notranslate nohighlight">\(p\)</span>-valores mostrados como <span class="math notranslate nohighlight">\(0{,}0}\)</span> son valores por debajo de ese redondeo — probablemente muy cercanos a cero dado el tamaño de muestra (<span class="math notranslate nohighlight">\(N&gt;22.000\)</span>) — y no se puede reportar aquí su magnitud exacta sin ajustar la precisión de despliegue en el notebook.</p>
 </div>
 </section>
 <section id="indicadores-compuestos-de-riesgo">
