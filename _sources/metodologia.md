@@ -22,50 +22,25 @@ El uso de **variables relativas (ratios)** en lugar de niveles absolutos en COP 
 
 **Variables ancla (niveles).** Tres variables en COP sirven de base para el resto de indicadores:
 
-::::{grid} 1 1 3 3
-:gutter: 2
-
-:::{grid-item-card} Capital de trabajo (CT)
-$$CT = \text{Activos corrientes} - \text{Pasivos corrientes}$$
-:::
-
-:::{grid-item-card} EBITDA
-$$EBITDA = \text{Ganancia operacional} + \text{Depreciación y amortización}$$
-:::
-
-:::{grid-item-card} Flujo de caja libre (FCL)
-$$FCL = CFO - \left(\lvert CapEx_{PPE}\rvert + \lvert CapEx_{Intangibles}\rvert\right)$$
-:::
-
-::::
+| Variable | Fórmula |
+|---|---|
+| Capital de trabajo (CT) | $CT = \text{Activos corrientes} - \text{Pasivos corrientes}$ |
+| EBITDA | $EBITDA = \text{Ganancia operacional} + \text{Depreciación y amortización}$ |
+| Flujo de caja libre (FCL) | $FCL = CFO - \left(\lvert CapEx_{PPE}\rvert + \lvert CapEx_{Intangibles}\rvert\right)$ |
 
 donde $CFO$ es el flujo de efectivo de las actividades de operación (*Cash Flow from Operating Activities*).
 
 **Ratios clásicos de análisis de crédito.** Construidos a partir de las variables ancla y de las cuatro dimensiones clásicas:
 
-::::{grid} 1 1 2 2
-:gutter: 2
-
-:::{grid-item-card} Rentabilidad
-- **Margen EBITDA**: $\dfrac{EBITDA}{\text{Ingresos operacionales}}\times 100$
-- **Margen neto**: $\dfrac{\text{Ganancia (pérdida) neta}}{\text{Ingresos operacionales}}\times 100$
-- **ROA**: $\dfrac{\text{Ganancia (pérdida) neta}}{\text{Total de activos}}\times 100$
-:::
-
-:::{grid-item-card} Endeudamiento
-- **Apalancamiento**: $\dfrac{\text{Total pasivos}}{\text{Total de activos}}\times 100$
-:::
-
-:::{grid-item-card} Liquidez
-- **Razón corriente**: $\dfrac{\text{Activos corrientes}}{\text{Pasivos corrientes}}$
-:::
-
-:::{grid-item-card} Flujo de caja
-- **Cobertura de intereses**: $\dfrac{\text{Ganancia por actividades de operación}}{\text{Costos financieros}}$
-- **Cobertura operativa**: $\dfrac{CFO}{\text{Pasivos corrientes totales}}$
-:::
-
-::::
+| Dimensión | Ratio | Fórmula |
+|---|---|---|
+| Rentabilidad | Margen EBITDA | $\dfrac{EBITDA}{\text{Ingresos operacionales}}\times 100$ |
+| Rentabilidad | Margen neto | $\dfrac{\text{Ganancia (pérdida) neta}}{\text{Ingresos operacionales}}\times 100$ |
+| Rentabilidad | ROA | $\dfrac{\text{Ganancia (pérdida) neta}}{\text{Total de activos}}\times 100$ |
+| Endeudamiento | Apalancamiento | $\dfrac{\text{Total pasivos}}{\text{Total de activos}}\times 100$ |
+| Liquidez | Razón corriente | $\dfrac{\text{Activos corrientes}}{\text{Pasivos corrientes}}$ |
+| Flujo de caja | Cobertura de intereses | $\dfrac{\text{Ganancia por actividades de operación}}{\text{Costos financieros}}$ |
+| Flujo de caja | Cobertura operativa | $\dfrac{CFO}{\text{Pasivos corrientes totales}}$ |
 
 ### Variables relativas al sector
 
@@ -102,7 +77,7 @@ $$
 \%\,\text{faltantes} = \frac{n_{\text{faltantes}}}{N} \times 100
 $$
 
-:::{note} Resultado
+:::{admonition} Resultado
 Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es **margen neto = 7,10%**, muy por encima del resto de ratios (< 0,4%), clasificado como **MNAR**: el faltante depende de que los ingresos operacionales sean cero — el propio valor no observado (el ratio) está relacionado con la causa de su ausencia — por lo que no es ignorable estadísticamente.
 :::
 
@@ -117,7 +92,7 @@ Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas 
 
 Este es el criterio que sustenta la lectura de los boxplots por año y por periodo (sección 2.5): los puntos fuera de los bigotes son las empresas atípicas de cada corte.
 
-:::{note} Validación de origen
+:::{admonition} Validación de origen
 Antes de decidir cómo tratar estos valores se verificó su origen mediante la identidad contable (fórmula en la sección 2.9): **0 de 22.517 registros** mostraron una inconsistencia mayor al 1%, confirmando que los extremos no son errores de captura sino ratios distorsionados por denominadores cercanos a cero.
 :::
 
@@ -137,30 +112,12 @@ A diferencia de eliminar filas, la winsorización preserva el tamaño de la mues
 
 **Estadísticos robustos.** Dada la asimetría esperada en datos financieros, se priorizó la mediana y el rango intercuartílico sobre la media, por ser menos sensibles a valores extremos:
 
-::::{grid} 1 1 2 2
-:gutter: 2
-
-:::{grid-item-card} Media y mediana
-$$
-\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i
-\qquad
-\tilde{x} =
-\begin{cases}
-x_{\left(\frac{n+1}{2}\right)} & n \text{ impar} \\[4pt]
-\dfrac{x_{(n/2)} + x_{(n/2+1)}}{2} & n \text{ par}
-\end{cases}
-$$
-:::
-
-:::{grid-item-card} Desviación estándar e IQR
-$$
-s = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2}
-\qquad
-IQR = Q_3 - Q_1
-$$
-:::
-
-::::
+| Estadístico | Fórmula |
+|---|---|
+| Media | $\bar{x} = \dfrac{1}{n}\sum_{i=1}^{n} x_i$ |
+| Mediana | $\tilde{x} = \begin{cases} x_{(\frac{n+1}{2})} & n \text{ impar} \\ \dfrac{x_{(n/2)}+x_{(n/2+1)}}{2} & n \text{ par}\end{cases}$ |
+| Desviación estándar | $s = \sqrt{\dfrac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2}$ |
+| IQR | $IQR = Q_3 - Q_1$ |
 
 con cuartiles obtenidos por interpolación lineal $Q_p = x_{(k)} + (n\cdot p - k)\cdot\left(x_{(k+1)}-x_{(k)}\right)$, $k=\lfloor n\cdot p\rfloor$, $p \in \{0.25,\,0.5,\,0.75\}$.
 
@@ -169,7 +126,7 @@ $$
 g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{3/2}}
 $$
 
-:::{note} Interpretación y resultado
+:::{admonition} Interpretación y resultado
 - $|g_1| < 0.5$: aproximadamente simétrica · $0.5 \le |g_1| < 1$: asimetría moderada · $|g_1| \ge 1$: asimetría fuerte
 - En el panel: EBITDA = 33,70 · ROA = 130,61 · apalancamiento = 149,38 · margen neto = −139,92 — asimetría fuerte generalizada, más extrema en los ratios que en las variables de nivel.
 :::
@@ -179,7 +136,7 @@ $$
 g_2 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^4}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{2}} - 3
 $$
 
-:::{note} Interpretación y resultado
+:::{admonition} Interpretación y resultado
 - $g_2 = 0$: mesocúrtica (igual que la normal) · $g_2 > 0$: leptocúrtica (colas más pesadas) · $g_2 < 0$: platicúrtica
 - En el panel: EBITDA = 1.902,76 · ROA = 17.890,37 · apalancamiento = 22.375,51 — colas extremadamente pesadas, coherente con la contaminación por denominadores casi nulos descrita en 2.4.
 :::
@@ -217,7 +174,7 @@ $$
 
 - $R_j^2$: coeficiente de determinación de la regresión de la variable $x_j$ sobre el resto de variables candidatas.
 
-:::{note} Interpretación del VIF
+:::{admonition} Interpretación del VIF
 - $VIF < 5$ → sin multicolinealidad problemática
 - $5 \le VIF < 10$ → moderada
 - $VIF \ge 10$ → severa
@@ -225,7 +182,7 @@ $$
 
 El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4.
 
-:::{warning} Pendientes antes de fijar el set final de variables
+:::{admonition} Pendientes antes de fijar el set final de variables
 - Aplicar winsorización (percentil 1-99) a los cuatro ratios financieros, no solo a las variables de nivel (sección 2.4).
 - Recalcular el VIF sobre esos datos winsorizados — el valor actual (~256.000 en apalancamiento y ROA) está contaminado por outliers de denominador-casi-cero, no refleja multicolinealidad real.
 :::
@@ -242,7 +199,7 @@ $$
 
 Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemia — y (b) terciles de tamaño de empresa.
 
-:::{note} Resultados
+:::{admonition} Resultados
 - **Periodos**: $H = 203,\ 183,\ 52$ (según la variable) con $p \approx 0$ en los tres casos — diferencias estadísticamente significativas, aunque, dado el tamaño de muestra ($N>22.000$), el desplazamiento real en escala signed-log es modesto (se retoma en la sección 2.8).
 - **Terciles de tamaño**: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.
 :::
@@ -265,7 +222,7 @@ $$
 
 - $r$, $c$: número de filas y columnas de la tabla de contingencia.
 
-:::{note} Resultado
+:::{admonition} Resultado
 $\chi^2$ con $p = 3{,}73\times10^{-5}$ (estadísticamente significativo) pero $V = 0{,}024$ (efecto económicamente casi nulo). Con $N>22.000$ observaciones, un efecto minúsculo ya resulta "significativo", por lo que el $p$-valor nunca debe leerse sin su tamaño de efecto.
 :::
 
@@ -277,7 +234,7 @@ $$
 - $n_{ij}$: número de empresas que pasaron del estado $i$ al estado $j$
 - $n_{i\cdot}=\sum_j n_{ij}$: total de empresas que estaban en el estado $i$
 
-:::{note} Resultado
+:::{admonition} Resultado
 Desde "Riesgo alto": $\hat{P}=44{,}9\%$ permanece en Riesgo alto, $37{,}2\%$ transiciona a Alerta y $17{,}9\%$ pasa directo a Sano — "Riesgo alto" no es un estado absorbente, pero sí muestra persistencia suficiente para justificar un modelo predictivo basado en historia financiera.
 :::
 
@@ -293,35 +250,13 @@ $$
 \%\,\text{error contable} = \frac{\text{Activos} - (\text{Pasivos} + \text{Patrimonio})}{\text{Activos}} \times 100
 $$
 
-:::{note} Resultado
+:::{admonition} Resultado
 Error contable promedio $\approx 0\%$ (−2,7e-19, ruido de punto flotante; desviación estándar = 0); **0 de 22.517 registros** con inconsistencia mayor al 1%. Esta validación es la que permite afirmar, en las secciones 2.4 a 2.6, que los valores extremos observados son reales y no errores de captura.
 :::
 
 Se analizó también el balance de entradas y salidas del panel año a año (solo 38,0% de los NITs presentes los 8 años), dado que este no es un censo fijo de empresas sino un corte anual de "las más grandes de Colombia": la salida de una empresa del panel puede deberse a reducción de tamaño, fusión o falta de reporte, y **no equivale por sí misma a un evento de insolvencia**.
 
-## 2.10 Definición del evento a predecir y diseño del modelo predictivo
-
-El problema se plantea como una **clasificación binaria supervisada**: dado el estado financiero de una empresa en el año $t$, predecir la probabilidad de que entre en un proceso de insolvencia en el año $t+1$:
-$$
-y_{i,\,t+1} =
-\begin{cases}
-1 & \text{si la empresa } i \text{ presenta el evento de insolvencia (proxy) en } t+1 \\
-0 & \text{en caso contrario}
-\end{cases}
-\qquad
-\hat{P}(y_{i,t+1}=1 \mid X_{i,t})
-$$
-
-- **Comprensión del negocio**: se define explícitamente que un falso negativo (dejar pasar una empresa que sí entra en insolvencia) es sustancialmente más costoso que un falso positivo, dado el caso de uso (decisión de crédito, evaluación de contraparte o supervisión regulatoria). Esta asimetría de costos condiciona la elección del punto de corte de probabilidad y las métricas de evaluación.
-- **Construcción del label**: dado que el SIIS no reporta directamente eventos de quiebra, se define un *proxy* interno — $\text{NIT-año}=1$ si la empresa presenta un corte extraordinario fuera de diciembre ese año — contrastado, en la medida de lo posible, contra los avisos públicos de insolvencia de la Superintendencia de Sociedades.
-- **Prevención de fuga de información (*data leakage*)**: los *features* corresponden al año $t$ y el label al año $t+1$, nunca al mismo periodo.
-- **Manejo del desbalance de clases**: con menos del 1% de casos positivos, se evalúan, en orden creciente de complejidad, `class_weight='balanced'` (opción más simple y defendible), submuestreo de la clase mayoritaria, y SMOTE — este último señalado como riesgoso dado el número reducido de casos positivos disponibles para interpolar con sentido.
-- **Modelado comparativo**: regresión logística con regularización (L1/L2) como línea base interpretable, frente a métodos de ensamble (Random Forest, Gradient Boosting/XGBoost/LightGBM) que capturan no linealidades e interacciones entre ratios, comparados mediante validación cruzada.
-- **Validación temporal (*walk-forward*)**: entrenamiento con 2017-2021, validación con 2022, prueba con 2023-2024 — evita que un *split* aleatorio filtre información del futuro hacia el pasado, decisión reforzada por la ruptura estructural de 2020 documentada en la sección 2.7.
-- **Métricas de evaluación**: *recall* y F1 sobre la clase positiva, curva Precisión-Recall (más informativa que la curva ROC bajo desbalance extremo) y matriz de confusión para justificar el punto de corte de probabilidad según el costo relativo de cada tipo de error.
-- **Interpretabilidad**: valores SHAP o los coeficientes de la regresión logística, dado que un modelo de riesgo destinado a uso bancario o regulatorio requiere poder explicar por qué se clasificó a una empresa como de riesgo alto, no solo producir un puntaje.
-
-## 2.11 Herramientas computacionales
+## 2.10 Herramientas computacionales
 
 El procesamiento y análisis se realizó en **Python**, utilizando principalmente:
 
@@ -330,7 +265,7 @@ El procesamiento y análisis se realizó en **Python**, utilizando principalment
 - `scipy.stats` (`skew`, `kurtosis`, `kruskal`, `chi2_contingency`): estadística descriptiva y pruebas de hipótesis no paramétricas.
 - `statsmodels` (`variance_inflation_factor`, `proportion_confint`, `add_constant`): diagnóstico de multicolinealidad e intervalos de confianza para proporciones.
 
-## 2.12 Variables del dataset
+## 2.11 Variables del dataset
 
 El panel consolidado y exportado contiene **22.521 filas × 43 columnas**, con un diccionario de variables que documenta el origen y significado de cada campo, sirviendo como insumo directo para la etapa de cruce con el label de insolvencia y modelado, sin necesidad de reejecutar el pipeline completo de depuración.
 
