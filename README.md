@@ -2,7 +2,7 @@
 
 Seminario de Investigación — Valerie Martínez y Luis Cantillo
 
-📘 **Jupyter Book (página publicada):** https://valeriemtz.github.io/-EDA-prediccion-de-insolvencia-financiera-SIIS-Supersociedades-/
+📘 **Jupyter Book:** https://valeriemtz.github.io/-EDA-prediccion-de-insolvencia-financiera-SIIS-Supersociedades-/
 
 ## Descripción
 
@@ -15,8 +15,6 @@ Este repositorio contiene el análisis exploratorio y la documentación del proy
 ## Fuente de datos
 
 **SIIS** (Sistema de Información y Seguimiento) de la **Superintendencia de Sociedades** de Colombia — reportes financieros (Balance General, Estado de Resultados, Flujo de Efectivo) de las 10.000 empresas más grandes del país, periodo 2017-2024.
-
-Panel consolidado: **22.521 registros empresa-año**, correspondientes a **4.202 empresas únicas**.
 
 ## Objetivos
 
