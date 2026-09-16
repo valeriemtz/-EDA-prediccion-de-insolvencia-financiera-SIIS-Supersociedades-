@@ -18,23 +18,26 @@
 }
 
 /* Tablas dentro de admonitions teal: sin esto, heredan el tema oscuro del sitio
-   en vez de la paleta clara del bloque, quedando ilegibles (texto tenue sobre fondo negro) */
+   en vez de la paleta clara del bloque, quedando ilegibles (texto tenue sobre fondo negro).
+   Se fija el fondo en CADA celda (no solo a nivel de <table>) y con !important,
+   porque el tema del sitio trae su propia regla de fondo por fila (odd/even) con
+   más especificidad, y si no se sobrescribe explícitamente en las dos, la fila
+   impar se queda con el fondo oscuro del tema mientras la par se ve bien. */
 .admonition.teal table {
-  background-color: #E6F5F3;
-  color: #003733;
   border-collapse: collapse;
   width: 100%;
 }
 .admonition.teal table th,
 .admonition.teal table td {
-  color: #003733;
+  background-color: #E6F5F3 !important;
+  color: #003733 !important;
   border: 1px solid #00695C;
   padding: 6px 10px;
 }
 .admonition.teal table th {
-  background-color: #CDEAE6;
+  background-color: #CDEAE6 !important;
   font-weight: bold;
 }
 .admonition.teal table tr:nth-child(even) td {
-  background-color: #D9F0ED;
+  background-color: #D9F0ED !important;
 }
