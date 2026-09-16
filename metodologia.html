@@ -61,6 +61,8 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'metodologia';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -370,7 +372,11 @@
             <nav aria-label="Page">
                 <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fuente-de-datos-y-preprocesamiento">2.1 Fuente de datos y preprocesamiento</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-variables-financieras">2.2 Construcción de variables financieras</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-variables-financieras">2.2 Construcción de variables financieras</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-relativas-al-sector">Variables relativas al sector</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#escala-y-terciles-de-tamano">Escala y terciles de tamaño</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tratamiento-de-datos-faltantes">2.3 Tratamiento de datos faltantes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tratamiento-de-outliers-y-winsorizacion">2.4 Tratamiento de outliers y winsorización</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estadistica-descriptiva-y-analisis-de-distribucion">2.5 Estadística descriptiva y análisis de distribución</a></li>
@@ -394,130 +400,241 @@
                   
   <section class="tex2jax_ignore mathjax_ignore" id="metodologia">
 <h1>Metodología<a class="headerlink" href="#metodologia" title="Link to this heading">#</a></h1>
-<p>El presente estudio combina un <strong>análisis exploratorio de datos (EDA)</strong> de corte longitudinal sobre el panel financiero del SIIS (2017-2024) con el diseño de un <strong>modelo de clasificación binaria supervisada</strong> para anticipar el riesgo de insolvencia empresarial (<em>financial distress</em>), siguiendo un esquema <strong>CRISP-DM adaptado</strong>. El EDA no es un ejercicio descriptivo independiente: cada decisión de tratamiento de datos (depuración, imputación, winsorización, selección de variables) queda validada empíricamente antes de pasar a la etapa de modelado, y cada hallazgo se conecta explícitamente con una decisión metodológica posterior.</p>
+<p>El presente estudio combina un <strong>análisis exploratorio de datos (EDA)</strong> de corte longitudinal sobre el panel financiero del SIIS (2017-2024) con el diseño de un <strong>modelo de clasificación binaria supervisada</strong> para anticipar el riesgo de insolvencia empresarial (<em>financial distress</em>), siguiendo un esquema <strong>CRISP-DM adaptado</strong>. A diferencia de una descripción puramente narrativa, cada decisión metodológica se documenta aquí junto con su fundamento estadístico formal — la fórmula exacta aplicada, sus supuestos y el resultado obtenido sobre el panel — de modo que el capítulo sirva tanto de bitácora reproducible como de justificación teórica de cada paso.</p>
 <section id="fuente-de-datos-y-preprocesamiento">
 <h2>2.1 Fuente de datos y preprocesamiento<a class="headerlink" href="#fuente-de-datos-y-preprocesamiento" title="Link to this heading">#</a></h2>
-<p>Los datos provienen de los reportes financieros masivos en formato XBRL que la <strong>Superintendencia de Sociedades</strong> centraliza a través del SIIS: Balance General (BS), Estado de Resultados (IS) y Flujo de Efectivo (CF), correspondientes a las ~10.000 empresas más grandes de Colombia, para el periodo <strong>2017-2024</strong> (2025 se excluye por ser un año en curso/incompleto).</p>
+<p>Los datos provienen de los reportes financieros masivos en formato XBRL que la <strong>Superintendencia de Sociedades</strong> centraliza a través del SIIS: Balance General (BS), Estado de Resultados (IS) y Flujo de Efectivo (CF), correspondientes a las ~10.000 empresas más grandes de Colombia, para el periodo <strong>2017-2024</strong> (2025 se excluye por ser un año en curso/incompleto). El uso de reportes bajo estándar XBRL/NIIF, vigente de forma consolidada durante todo el periodo, garantiza consistencia semántica entre empresas y años y reduce el sesgo de comparabilidad frente a normativas contables previas (COLGAAP).</p>
 <p>El preprocesamiento incluyó:</p>
 <ul class="simple">
 <li><p><strong>Depuración de duplicados estructurales</strong>: cada empresa aparece dos veces por fecha de corte (columna <code class="docutils literal notranslate"><span class="pre">Periodo</span></code>: <em>“Periodo Actual”</em> vs. <em>“Periodo Anterior”</em>, este último el dato comparativo del período previo, no una empresa distinta). Un número reducido de NITs por año (entre 7 y ~28) presenta además un corte intermedio adicional (p. ej. septiembre) por haber radicado un reporte extra ese año.</p></li>
-<li><p><strong>Regla de deduplicación</strong>: se conserva únicamente <code class="docutils literal notranslate"><span class="pre">Periodo</span> <span class="pre">=</span> <span class="pre">&quot;Periodo</span> <span class="pre">Actual&quot;</span></code> con corte al 31 de diciembre (panel anual).</p></li>
-<li><p><strong>Validación de la depuración</strong>: se comparó, para cada estado financiero y año, el número de filas antes y después de depurar, y el número de empresas con corte a 31-dic frente a otra fecha. BS, IS y CF cuadran exactamente en filas tras la depuración para los 8 años, con solo 2 NITs (uno en 2022 y otro en 2024) con corte distinto a diciembre.</p></li>
+<li><p><strong>Regla de deduplicación</strong>: se conserva únicamente <code class="docutils literal notranslate"><span class="pre">Periodo</span> <span class="pre">=</span> <span class="pre">&quot;Periodo</span> <span class="pre">Actual&quot;</span></code> con corte al 31 de diciembre, respetando el principio de cierre anual del análisis financiero.</p></li>
 <li><p><strong>Construcción del panel consolidado</strong>: cruce interno (<em>inner join</em>) de BS + IS + CF por NIT dentro de cada año — solo se conservan empresas que reportaron los tres estados financieros ese año.</p></li>
 </ul>
-<p><strong>Resultado</strong>: panel final de <strong>22.521 filas empresa-año, correspondientes a 4.202 NITs únicos</strong>, con una fila exacta por empresa-año (sin duplicados arrastrados).</p>
+<p><strong>Resultado</strong>: panel final de <strong>22.521 filas empresa-año, correspondientes a 4.202 NITs únicos</strong>, validado comparando, para cada estado financiero y año, el número de filas antes y después de depurar (<code class="docutils literal notranslate"><span class="pre">filas_tras_dedup</span></code> = <code class="docutils literal notranslate"><span class="pre">nit_unicos_crudo</span></code> en los 8 años).</p>
 </section>
 <section id="construccion-de-variables-financieras">
 <h2>2.2 Construcción de variables financieras<a class="headerlink" href="#construccion-de-variables-financieras" title="Link to this heading">#</a></h2>
-<p>Siguiendo las cuatro dimensiones clásicas del análisis de crédito (liquidez, endeudamiento, rentabilidad y flujo de caja), se calcularon las siguientes variables a partir de las columnas del panel consolidado:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>Categoría</p></th>
-<th class="head"><p>Variable</p></th>
-<th class="head"><p>Fórmula</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Liquidez</p></td>
-<td><p>Razón corriente</p></td>
-<td><p>Activos corrientes totales / Pasivos corrientes totales</p></td>
-</tr>
-<tr class="row-odd"><td><p>Liquidez</p></td>
-<td><p>Capital de trabajo / Activos</p></td>
-<td><p>(Activos corrientes − Pasivos corrientes) / Total de activos</p></td>
-</tr>
-<tr class="row-even"><td><p>Endeudamiento</p></td>
-<td><p>Apalancamiento total</p></td>
-<td><p>Total pasivos / Total de activos</p></td>
-</tr>
-<tr class="row-odd"><td><p>Endeudamiento</p></td>
-<td><p>Cobertura de intereses</p></td>
-<td><p>Ganancia por actividades de operación / Costos financieros</p></td>
-</tr>
-<tr class="row-even"><td><p>Rentabilidad</p></td>
-<td><p>ROA</p></td>
-<td><p>Ganancia (pérdida) / Total de activos</p></td>
-</tr>
-<tr class="row-odd"><td><p>Rentabilidad</p></td>
-<td><p>Margen neto</p></td>
-<td><p>Ganancia (pérdida) / Ingresos de actividades ordinarias</p></td>
-</tr>
-<tr class="row-even"><td><p>Flujo de caja</p></td>
-<td><p>Cobertura operativa</p></td>
-<td><p>Flujo de efectivo de operación / Pasivos corrientes totales</p></td>
-</tr>
-<tr class="row-odd"><td><p>Tamaño</p></td>
-<td><p>Escala</p></td>
-<td><p>log(Total de activos)</p></td>
-</tr>
-<tr class="row-even"><td><p>Sector</p></td>
-<td><p>Riesgo sectorial</p></td>
-<td><p>CIIU agrupado (2 dígitos)</p></td>
-</tr>
-<tr class="row-odd"><td><p>Tendencia</p></td>
-<td><p>Delta interanual</p></td>
-<td><p>Variación (t vs. t-1) del ROA y del endeudamiento</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>Adicionalmente, dado que el panel mezcla empresas de tamaños muy distintos dentro del universo de “las más grandes de Colombia”, se incorporaron variables <strong>relativas</strong>:</p>
-<ul class="simple">
-<li><p><strong>Terciles de tamaño</strong> (<code class="docutils literal notranslate"><span class="pre">pequeña</span></code> / <code class="docutils literal notranslate"><span class="pre">mediana</span></code> / <code class="docutils literal notranslate"><span class="pre">grande</span></code>), construidos con <code class="docutils literal notranslate"><span class="pre">pd.qcut</span></code> sobre el total de activos, quedando casi perfectamente balanceados (7.505–7.506 empresas-año por tercil).</p></li>
-<li><p><strong>Variables relativas al sector</strong> (<code class="docutils literal notranslate"><span class="pre">margen_ebitda_rel_sector</span></code>, <code class="docutils literal notranslate"><span class="pre">apalancamiento_rel_sector</span></code>): diferencia entre el valor de la empresa y la mediana de su sector (CIIU 2 dígitos) en el mismo año, para no penalizar a una empresa solo por operar en un sector de márgenes estructuralmente bajos.</p></li>
-</ul>
+<p>El uso de <strong>variables relativas (ratios)</strong> en lugar de niveles absolutos en COP se justifica por la heterogeneidad de escala del panel (empresas pequeñas y gigantes conviviendo en el mismo corte) y por ser el estándar en analítica de crédito: los ratios son <strong>invariantes a la escala</strong>, a diferencia de los niveles absolutos. Siguiendo las cuatro dimensiones clásicas del análisis de crédito (liquidez, endeudamiento, rentabilidad y flujo de caja), se calcularon las siguientes variables:</p>
+<p><strong>Capital de trabajo (CT)</strong>
+$<span class="math notranslate nohighlight">\(
+CT = \text{Activos corrientes} - \text{Pasivos corrientes}
+\)</span>$</p>
+<p><strong>EBITDA</strong>
+$<span class="math notranslate nohighlight">\(
+EBITDA = \text{Ganancia operacional} + \text{Depreciación y amortización}
+\)</span>$</p>
+<p><strong>Flujo de caja libre (FCL)</strong>
+$<span class="math notranslate nohighlight">\(
+FCL = CFO - \left( \lvert CapEx_{PPE} \rvert + \lvert CapEx_{Intangibles} \rvert \right)
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>CFO$ es el flujo de efectivo de las actividades de operación (<em>Cash Flow from Operating Activities</em>).</p>
+<p><strong>Margen EBITDA</strong>
+$<span class="math notranslate nohighlight">\(
+\text{Margen}_{EBITDA} = \frac{EBITDA}{\text{Ingresos operacionales}} \times 100
+\)</span>$</p>
+<p><strong>Margen neto</strong>
+$<span class="math notranslate nohighlight">\(
+\text{Margen}_{neto} = \frac{\text{Ganancia (pérdida) neta}}{\text{Ingresos operacionales}} \times 100
+\)</span>$</p>
+<p><strong>ROA (<em>Return on Assets</em>)</strong>
+$<span class="math notranslate nohighlight">\(
+ROA = \frac{\text{Ganancia (pérdida) neta}}{\text{Total de activos}} \times 100
+\)</span>$</p>
+<p><strong>Apalancamiento</strong>
+$<span class="math notranslate nohighlight">\(
+\text{Apalancamiento} = \frac{\text{Total pasivos}}{\text{Total de activos}} \times 100
+\)</span>$</p>
+<p><strong>Razón corriente</strong>
+$<span class="math notranslate nohighlight">\(
+\text{Razón corriente} = \frac{\text{Activos corrientes}}{\text{Pasivos corrientes}}
+\)</span>$</p>
+<p><strong>Cobertura de intereses</strong>
+$<span class="math notranslate nohighlight">\(
+\text{Cobertura de intereses} = \frac{\text{Ganancia por actividades de operación}}{\text{Costos financieros}}
+\)</span>$</p>
+<p><strong>Cobertura operativa</strong>
+$<span class="math notranslate nohighlight">\(
+\text{Cobertura operativa} = \frac{CFO}{\text{Pasivos corrientes totales}}
+\)</span>$</p>
+<section id="variables-relativas-al-sector">
+<h3>Variables relativas al sector<a class="headerlink" href="#variables-relativas-al-sector" title="Link to this heading">#</a></h3>
+<p>Para no penalizar a una empresa solo por operar en un sector de márgenes estructuralmente bajos, se calculó la diferencia entre el valor de cada empresa y la mediana de su sector (CIIU 2 dígitos) en el mismo año:
+$<span class="math notranslate nohighlight">\(
+x^{\,rel}_{i,t} = x_{i,t} - \widetilde{x}_{\,sector(i),\,t}
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>\widetilde{x}_{,sector(i),,t}<span class="math notranslate nohighlight">\( es la mediana de la variable \)</span>x<span class="math notranslate nohighlight">\( para el sector de la empresa \)</span>i<span class="math notranslate nohighlight">\( en el año \)</span>t$. Se construyeron así <code class="docutils literal notranslate"><span class="pre">margen_ebitda_rel_sector</span></code> y <code class="docutils literal notranslate"><span class="pre">apalancamiento_rel_sector</span></code>.</p>
+</section>
+<section id="escala-y-terciles-de-tamano">
+<h3>Escala y terciles de tamaño<a class="headerlink" href="#escala-y-terciles-de-tamano" title="Link to this heading">#</a></h3>
+<p>El tamaño empresarial sigue típicamente una distribución asimétrica (log-normal), por lo que se usa la transformación logarítmica para aproximar normalidad antes de clasificar por tamaño:
+$<span class="math notranslate nohighlight">\(
+\text{Escala} = \log(\text{Total de activos} + 1)
+\)</span><span class="math notranslate nohighlight">\(
+(el \)</span>+1$ evita indeterminación cuando el total de activos es 0).</p>
+<p>Sobre esta variable se aplicó <code class="docutils literal notranslate"><span class="pre">pd.qcut</span></code> para obtener terciles balanceados:
+$<span class="math notranslate nohighlight">\(
+n_{\text{Pequeña}} \approx n_{\text{Mediana}} \approx n_{\text{Grande}} \approx \frac{N}{3}
+\)</span>$
+En el panel: Pequeña = 7.506, Mediana = 7.505, Grande = 7.506 (N = 22.521).</p>
+</section>
 </section>
 <section id="tratamiento-de-datos-faltantes">
 <h2>2.3 Tratamiento de datos faltantes<a class="headerlink" href="#tratamiento-de-datos-faltantes" title="Link to this heading">#</a></h2>
-<p>Se realizó un diagnóstico de valores faltantes por variable antes de cualquier análisis de distribución. Las variables ancla (EBITDA, capital de trabajo, FCL) están prácticamente completas (0% de faltantes); los ratios derivados presentan faltantes adicionales por depender de denominadores que en ocasiones son cero o nulos (ROA y apalancamiento: 0,02%; capital de trabajo/activos: 0,28%; razón corriente: 0,38%; <strong>margen neto: 7,10%</strong>).</p>
-<p>El faltante en margen neto se identificó como <strong>no aleatorio (MNAR)</strong>: depende de que los ingresos operacionales sean cero, y afecta sistemáticamente a las empresas más atípicas del panel. Por esta razón se adoptó la siguiente regla:</p>
+<p>Se adoptó el marco formal de mecanismos de datos faltantes (Little &amp; Rubin):</p>
 <ul class="simple">
-<li><p>Los ratios con denominador cero o nulo quedan como <code class="docutils literal notranslate"><span class="pre">NaN</span></code> (no se imputan con 0, ya que un ratio con denominador cero no es “cero”, es “no calculable”).</p></li>
-<li><p>Los faltantes residuales se excluyen <strong>solo del análisis de esa variable puntual</strong>, nunca eliminando la fila completa del panel consolidado.</p></li>
+<li><p><strong>MCAR</strong> (<em>Missing Completely At Random</em>): <span class="math notranslate nohighlight">\(P(R \mid X_{obs}, X_{mis}) = P(R)\)</span></p></li>
+<li><p><strong>MAR</strong> (<em>Missing At Random</em>): <span class="math notranslate nohighlight">\(P(R \mid X_{obs}, X_{mis}) = P(R \mid X_{obs})\)</span></p></li>
+<li><p><strong>MNAR</strong> (<em>Missing Not At Random</em>): <span class="math notranslate nohighlight">\(P(R \mid X_{obs}, X_{mis}) \neq P(R \mid X_{obs})\)</span></p></li>
 </ul>
+<p>donde <span class="math notranslate nohighlight">\(R\)</span> es el indicador binario de ausencia y <span class="math notranslate nohighlight">\(X_{obs}\)</span>, <span class="math notranslate nohighlight">\(X_{mis}\)</span> son los datos observados y faltantes, respectivamente. El porcentaje de faltantes por variable se calculó como:
+$<span class="math notranslate nohighlight">\(
+\%\,\text{faltantes} = \frac{n_{\text{faltantes}}}{N} \times 100
+\)</span>$</p>
+<p>Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es <strong>margen neto = 7,10%</strong>, muy por encima del resto de ratios (&lt; 0,4%), clasificado como <strong>MNAR</strong>: el faltante depende de que los ingresos operacionales sean cero — el propio valor no observado (el ratio) está relacionado con la causa de su ausencia — por lo que no es ignorable estadísticamente.</p>
+<p><strong>Regla adoptada</strong>: los ratios con denominador cero o nulo quedan como <code class="docutils literal notranslate"><span class="pre">NaN</span></code> (nunca se imputan con 0, ya que un ratio con denominador cero no es “cero”, es “no calculable”); los faltantes residuales se excluyen solo del análisis de esa variable puntual, nunca eliminando la fila completa del panel.</p>
 </section>
 <section id="tratamiento-de-outliers-y-winsorizacion">
 <h2>2.4 Tratamiento de outliers y winsorización<a class="headerlink" href="#tratamiento-de-outliers-y-winsorizacion" title="Link to this heading">#</a></h2>
-<p>Las variables de nivel (EBITDA, capital de trabajo, FCL) mostraron asimetría fuerte (asimetría 4,4–37,6) y colas pesadas, típico de un panel con empresas de tamaños muy heterogéneos. Los ratios acotados por construcción (ROA, apalancamiento, razón corriente, margen neto) mostraron valores extremos aún mayores (asimetría de 120 a 150; curtosis de 15.000 a 22.000), explicados por divisiones entre denominadores casi nulos.</p>
-<p>Antes de decidir cómo tratar estos valores, se verificó su origen mediante la <strong>identidad contable</strong> (Activos = Pasivos + Patrimonio, sección de validación de calidad de datos): el error contable promedio fue de -2,7e-19 con desviación estándar 0 (ruido de punto flotante), y 0 de 22.517 registros mostraron una inconsistencia mayor al 1%. Esto confirma que los valores extremos <strong>no son errores de captura</strong>, sino ratios genuinamente distorsionados por denominadores cercanos a cero — un problema de escala y tratamiento estadístico, no de calidad del dato fuente.</p>
-<p>En consecuencia, se aplicó <strong>winsorización al percentil 1 y 99</strong> sobre las variables de nivel, preservando el tamaño de la muestra (a diferencia de eliminar filas) sin desplazar las medias. El mismo criterio queda pendiente de aplicarse a los cuatro ratios financieros antes del cálculo definitivo de multicolinealidad y de la etapa de modelado.</p>
+<p><strong>Regla de detección por rango intercuartílico (Tukey).</strong> Un valor <span class="math notranslate nohighlight">\(x_i\)</span> se considera outlier si:
+$<span class="math notranslate nohighlight">\(
+x_i &lt; Q_1 - 1.5 \cdot IQR \quad \text{o} \quad x_i &gt; Q_3 + 1.5 \cdot IQR
+\)</span><span class="math notranslate nohighlight">\(
+y outlier extremo bajo la regla de \)</span>3 \times IQR<span class="math notranslate nohighlight">\( si:
+\)</span><span class="math notranslate nohighlight">\(
+x_i &lt; Q_1 - 3 \cdot IQR \quad \text{o} \quad x_i &gt; Q_3 + 3 \cdot IQR
+\)</span>$
+Este es el criterio que sustenta la lectura de los boxplots por año y por periodo (sección 2.5): los puntos fuera de los bigotes son las empresas atípicas de cada corte.</p>
+<p>Antes de decidir cómo tratar estos valores se verificó su origen mediante la identidad contable (fórmula en la sección 2.9): <strong>0 de 22.517 registros</strong> mostraron una inconsistencia mayor al 1%, confirmando que los extremos no son errores de captura sino ratios distorsionados por denominadores cercanos a cero.</p>
+<p><strong>Winsorización.</strong> Se aplicó recorte al percentil 1 y 99 sobre las variables de nivel:
+$<span class="math notranslate nohighlight">\(
+x_i^{\,w} =
+\begin{cases}
+Q_{0.01} &amp; \text{si } x_i &lt; Q_{0.01} \\
+x_i &amp; \text{si } Q_{0.01} \le x_i \le Q_{0.99} \\
+Q_{0.99} &amp; \text{si } x_i &gt; Q_{0.99}
+\end{cases}
+\)</span>$
+A diferencia de eliminar filas, la winsorización preserva el tamaño de la muestra y no desplaza las medias — confirmado empíricamente (EBITDA, capital de trabajo y FCL mantienen la misma media antes y después del recorte). El mismo criterio queda pendiente de aplicarse a los cuatro ratios financieros antes del cálculo definitivo de VIF y de la selección final de variables del modelo.</p>
 </section>
 <section id="estadistica-descriptiva-y-analisis-de-distribucion">
 <h2>2.5 Estadística descriptiva y análisis de distribución<a class="headerlink" href="#estadistica-descriptiva-y-analisis-de-distribucion" title="Link to this heading">#</a></h2>
-<p>Se calcularon estadísticos univariados (media, mediana, desviación estándar, asimetría y curtosis) para cada variable, complementados con histogramas en escala <strong>signed-log</strong> (para preservar el signo de valores negativos) y sus respectivas funciones de distribución empírica acumulada (ECDF), lo que permite leer directamente el porcentaje de empresas con una variable en terreno negativo en cualquier año.</p>
-<p>Se construyeron además boxplots por año y por periodo para identificar visualmente el rango intercuartílico y los valores atípicos de cada variable, verificando que los outliers no se concentran en un año puntual sino que constituyen una característica estructural del panel.</p>
+<p><strong>Estadísticos robustos.</strong> Dada la asimetría esperada en datos financieros, se priorizó la mediana y el rango intercuartílico sobre la media, por ser menos sensibles a valores extremos:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i
+\qquad\qquad
+\tilde{x} =
+\begin{cases}
+x_{\left(\frac{n+1}{2}\right)} &amp; n \text{ impar} \\[4pt]
+\dfrac{x_{(n/2)} + x_{(n/2+1)}}{2} &amp; n \text{ par}
+\end{cases}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[
+s = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^2}
+\qquad\qquad
+IQR = Q_3 - Q_1
+\]</div>
+<p>con cuartiles obtenidos por interpolación lineal <span class="math notranslate nohighlight">\(Q_p = x_{(k)} + (n\cdot p - k)\cdot\left(x_{(k+1)}-x_{(k)}\right)\)</span>, <span class="math notranslate nohighlight">\(k=\lfloor n\cdot p\rfloor\)</span>, <span class="math notranslate nohighlight">\(p \in \{0.25,\,0.5,\,0.75\}\)</span>.</p>
+<p><strong>Asimetría (skewness de Fisher):</strong>
+$<span class="math notranslate nohighlight">\(
+g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{3/2}}
+\)</span><span class="math notranslate nohighlight">\(
+Interpretación: \)</span>|g_1|&lt;0.5<span class="math notranslate nohighlight">\( aproximadamente simétrica; \)</span>0.5 \le |g_1| &lt; 1<span class="math notranslate nohighlight">\( asimetría moderada; \)</span>|g_1|\ge 1$ asimetría fuerte. En el panel: EBITDA = 33,70; ROA = 130,61; apalancamiento = 149,38; margen neto = −139,92 — asimetría fuerte generalizada, más extrema en los ratios que en las variables de nivel.</p>
+<p><strong>Curtosis en exceso (Fisher):</strong>
+$<span class="math notranslate nohighlight">\(
+g_2 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^4}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{2}} - 3
+\)</span><span class="math notranslate nohighlight">\(
+\)</span>g_2 = 0<span class="math notranslate nohighlight">\(: mesocúrtica (igual que la normal); \)</span>g_2&gt;0<span class="math notranslate nohighlight">\(: leptocúrtica (colas más pesadas); \)</span>g_2&lt;0$: platicúrtica. En el panel: EBITDA = 1.902,76; ROA = 17.890,37; apalancamiento = 22.375,51 — colas extremadamente pesadas, coherente con la contaminación por denominadores casi nulos descrita en 2.4.</p>
+<p><strong>Signed-log (transformación para visualización).</strong> Para representar histogramas y series sin que los outliers aplasten la escala, preservando el signo de valores negativos:
+$<span class="math notranslate nohighlight">\(
+x' = \operatorname{sign}(x)\cdot\log(1+|x|), \qquad
+\operatorname{sign}(x)=\begin{cases}-1 &amp; x&lt;0\\ 0 &amp; x=0\\ 1 &amp; x&gt;0\end{cases}
+\)</span>$</p>
+<p><strong>ECDF (función de distribución empírica acumulada):</strong>
+$<span class="math notranslate nohighlight">\(
+\hat{F}_n(x) = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}\{x_i \le x\}
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>\mathbb{1}{\cdot}<span class="math notranslate nohighlight">\( es la función indicadora. El punto donde la ECDF cruza \)</span>x=0$ corresponde directamente al porcentaje de empresas con esa variable en negativo — la lectura usada en la sección de señales de estrés financiero.</p>
 </section>
 <section id="analisis-bivariado-y-multicolinealidad">
 <h2>2.6 Análisis bivariado y multicolinealidad<a class="headerlink" href="#analisis-bivariado-y-multicolinealidad" title="Link to this heading">#</a></h2>
-<p>Se calculó una matriz de correlación entre las variables financieras (nivel y ratios) para evaluar redundancia informativa entre potenciales <em>features</em> del modelo. Como complemento, se calculó el <strong>Variance Inflation Factor (VIF)</strong>, que mide cuánta varianza de cada variable ya está explicada por el resto del conjunto de forma conjunta (a diferencia de la correlación, que es <em>pairwise</em>). Se identificó que el VIF calculado sobre variables sin winsorizar está contaminado por los mismos outliers de denominador-casi-cero descritos en 2.4, por lo que su recálculo sobre datos winsorizados queda como paso previo obligatorio a la selección final de variables del modelo.</p>
+<p><strong>Correlación de Pearson</strong> (relaciones lineales):
+$<span class="math notranslate nohighlight">\(
+r_{xy} = \frac{\sum (x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum (x_i-\bar{x})^2 \cdot \sum (y_i-\bar{y})^2}}
+\)</span>$</p>
+<p><strong>Correlación de Spearman</strong> (relaciones monótonas no necesariamente lineales):
+$<span class="math notranslate nohighlight">\(
+\rho_s = 1 - \frac{6\sum d_i^2}{n(n^2-1)}
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>d_i<span class="math notranslate nohighlight">\( es la diferencia entre los rangos de \)</span>x_i<span class="math notranslate nohighlight">\( y \)</span>y_i$.</p>
+<p><strong>Factor de Inflación de Varianza (VIF)</strong>, que mide multicolinealidad conjunta (a diferencia de la correlación, que es <em>pairwise</em>):
+$<span class="math notranslate nohighlight">\(
+VIF_j = \frac{1}{1-R_j^2}
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>R_j^2<span class="math notranslate nohighlight">\( es el coeficiente de determinación de la regresión de la variable \)</span>x_j<span class="math notranslate nohighlight">\( sobre el resto de variables candidatas. Interpretación: \)</span>VIF&lt;5<span class="math notranslate nohighlight">\( sin multicolinealidad problemática; \)</span>5\le VIF&lt;10<span class="math notranslate nohighlight">\( moderada; \)</span>VIF\ge 10$ severa. El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4; su recálculo sobre datos winsorizados es un paso pendiente antes de fijar el set final de variables.</p>
 </section>
 <section id="analisis-comparativo-por-grupos">
 <h2>2.7 Análisis comparativo por grupos<a class="headerlink" href="#analisis-comparativo-por-grupos" title="Link to this heading">#</a></h2>
-<p><strong>Por periodo (pre-pandemia / pandemia / post-pandemia).</strong> Se compararon medianas y distribuciones de las variables ancla entre los tres bloques temporales, incluyendo un análisis de cascada (<em>waterfall</em>) EBITDA → CFO → FCL por periodo para explicar, paso a paso, cómo la utilidad operativa contable se convierte en caja realmente disponible. La significancia de las diferencias entre periodos se evaluó mediante la prueba no paramétrica de <strong>Kruskal-Wallis</strong> (equivalente a un ANOVA de un factor sin supuesto de normalidad), dado el nivel de asimetría de las variables.</p>
-<p><strong>Por tamaño de empresa (terciles de activos).</strong> Se comparó el porcentaje de empresas con variables en terreno negativo entre los terciles pequeña/mediana/grande, encontrando que el tamaño explica bien el riesgo de rentabilidad operativa (EBITDA negativo cae de 27,1% a 14,6% entre pequeñas y grandes) pero no explica el riesgo de flujo de caja libre (FCL negativo se mantiene prácticamente plano entre tamaños, ~43-44%).</p>
-<p><strong>Por sector económico (CIIU, 2 dígitos).</strong> Se analizó el porcentaje de empresas con FCL negativo por sector, ponderado por el peso relativo de cada sector en el panel (activos totales), y se profundizó con cascadas <em>waterfall</em> en los tres sectores de mayor riesgo relativo.</p>
-<p><strong>Por geografía (departamento).</strong> Se construyó un mapa coroplético interactivo de Colombia con la proporción de empresas con FCL negativo por departamento, siempre acompañado del número de empresas que respalda cada porcentaje, para evitar interpretaciones espurias en departamentos con pocas observaciones.</p>
+<p><strong>Prueba de Kruskal-Wallis</strong> (equivalente no paramétrico de un ANOVA de un factor, apropiado dada la asimetría de las variables):
+$<span class="math notranslate nohighlight">\(
+H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>N<span class="math notranslate nohighlight">\( es el total de observaciones, \)</span>k<span class="math notranslate nohighlight">\( el número de grupos, \)</span>n_i<span class="math notranslate nohighlight">\( el tamaño del grupo \)</span>i<span class="math notranslate nohighlight">\( y \)</span>R_i<span class="math notranslate nohighlight">\( la suma de rangos del grupo \)</span>i<span class="math notranslate nohighlight">\(. Hipótesis: \)</span>H_0<span class="math notranslate nohighlight">\(: las medianas de los \)</span>k<span class="math notranslate nohighlight">\( grupos son iguales; \)</span>H_1$: al menos una mediana difiere.</p>
+<p>Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemia — y (b) terciles de tamaño de empresa. Para los periodos, el resultado fue <span class="math notranslate nohighlight">\(H = 203,\ 183,\ 52\)</span> (según la variable) con <span class="math notranslate nohighlight">\(p \approx 0\)</span> en los tres casos: diferencias estadísticamente significativas, aunque, dado el tamaño de muestra (<span class="math notranslate nohighlight">\(N&gt;22.000\)</span>), el desplazamiento real en escala signed-log es modesto — punto que se retoma formalmente en la sección 2.8.</p>
+<p>Adicionalmente, se compararon proporciones entre terciles de tamaño: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.</p>
 </section>
 <section id="indicadores-compuestos-de-riesgo">
 <h2>2.8 Indicadores compuestos de riesgo<a class="headerlink" href="#indicadores-compuestos-de-riesgo" title="Link to this heading">#</a></h2>
-<p><strong>Semáforo financiero.</strong> Se clasificó cada empresa-año en tres estados — <em>sano</em>, <em>alerta</em> (una señal negativa) y <em>riesgo alto</em> (dos o más señales negativas simultáneas) — y se analizó su evolución año a año mediante un área apilada al 100%. La asociación entre el semáforo y el periodo (pre/pandemia/post) se evaluó con una prueba <strong>chi-cuadrado de independencia</strong>, complementada con el coeficiente <strong>Cramér’s V</strong> para distinguir significancia estadística de relevancia práctica del efecto, dado el tamaño de muestra del panel (&gt;22.000 observaciones).</p>
-<p><strong>Persistencia del riesgo (matriz de transición).</strong> Se construyó una matriz de transición de primer orden (cadena de Markov) para estimar la probabilidad de que una misma empresa cambie de estado del semáforo de un año al siguiente, evaluando si el riesgo financiero es persistente o volátil — supuesto clave para justificar la viabilidad de predecir insolvencia a partir de datos financieros históricos.</p>
+<p><strong>Semáforo financiero.</strong> Se clasificó cada empresa-año en tres estados — <em>sano</em>, <em>alerta</em> (una señal negativa) y <em>riesgo alto</em> (dos o más señales negativas simultáneas) — y se evaluó su asociación con el periodo mediante:</p>
+<p><strong>Prueba chi-cuadrado de independencia:</strong>
+$<span class="math notranslate nohighlight">\(
+\chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>O_{ij}<span class="math notranslate nohighlight">\( es la frecuencia observada y \)</span>E_{ij}<span class="math notranslate nohighlight">\( la frecuencia esperada bajo independencia en la celda \)</span>(i,j)$ de la tabla de contingencia semáforo × periodo.</p>
+<p><strong>Tamaño del efecto — V de Cramér:</strong>
+$<span class="math notranslate nohighlight">\(
+V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>r<span class="math notranslate nohighlight">\( y \)</span>c<span class="math notranslate nohighlight">\( son el número de filas y columnas de la tabla de contingencia. Resultado obtenido: \)</span>\chi^2<span class="math notranslate nohighlight">\( con \)</span>p = 3{,}73\times10^{-5}<span class="math notranslate nohighlight">\( (estadísticamente significativo) pero \)</span>V = 0{,}024<span class="math notranslate nohighlight">\( (efecto económicamente casi nulo) — con \)</span>N&gt;22.000<span class="math notranslate nohighlight">\( observaciones, un efecto minúsculo ya resulta &quot;significativo&quot;, por lo que el \)</span>p$-valor nunca debe leerse sin su tamaño de efecto.</p>
+<p><strong>Persistencia del riesgo — matriz de transición (cadena de Markov de primer orden).</strong> La probabilidad de transición del estado <span class="math notranslate nohighlight">\(i\)</span> en el año <span class="math notranslate nohighlight">\(t\)</span> al estado <span class="math notranslate nohighlight">\(j\)</span> en el año <span class="math notranslate nohighlight">\(t+1\)</span> se estima como:
+$<span class="math notranslate nohighlight">\(
+\hat{P}_{ij} = \frac{n_{ij}}{n_{i\cdot}}
+\)</span><span class="math notranslate nohighlight">\(
+donde \)</span>n_{ij}<span class="math notranslate nohighlight">\( es el número de empresas que pasaron del estado \)</span>i<span class="math notranslate nohighlight">\( al estado \)</span>j<span class="math notranslate nohighlight">\( y \)</span>n_{i\cdot}=\sum_j n_{ij}<span class="math notranslate nohighlight">\( es el total de empresas que estaban en el estado \)</span>i<span class="math notranslate nohighlight">\(. Resultado: desde &quot;Riesgo alto&quot;, \)</span>\hat{P}=44{,}9%<span class="math notranslate nohighlight">\( permanece en Riesgo alto, \)</span>37{,}2%<span class="math notranslate nohighlight">\( transiciona a Alerta y \)</span>17{,}9%$ pasa directo a Sano — “Riesgo alto” no es un estado absorbente, pero sí muestra persistencia suficiente para justificar un modelo predictivo basado en historia financiera.</p>
 </section>
 <section id="validacion-de-calidad-y-estructura-del-panel">
 <h2>2.9 Validación de calidad y estructura del panel<a class="headerlink" href="#validacion-de-calidad-y-estructura-del-panel" title="Link to this heading">#</a></h2>
-<p>Se verificó la identidad contable fundamental (Activos = Pasivos + Patrimonio) como chequeo de confiabilidad del dato, independiente del análisis financiero propiamente dicho. Se analizó también el balance de entradas y salidas del panel año a año, dado que este no es un censo fijo de empresas sino un corte anual de “las más grandes de Colombia”: la salida de una empresa del panel puede deberse a reducción de tamaño, fusión o falta de reporte, y <strong>no equivale por sí misma a un evento de insolvencia</strong>.</p>
+<p><strong>Identidad contable fundamental</strong>, verificada como chequeo de confiabilidad del dato (independiente del análisis financiero propiamente dicho):
+$<span class="math notranslate nohighlight">\(
+\text{Activos} = \text{Pasivos} + \text{Patrimonio}
+\)</span><span class="math notranslate nohighlight">\(
+\)</span><span class="math notranslate nohighlight">\(
+\%\,\text{error contable} = \frac{\text{Activos} - (\text{Pasivos} + \text{Patrimonio})}{\text{Activos}} \times 100
+\)</span><span class="math notranslate nohighlight">\(
+Resultado: error contable promedio \)</span>\approx 0%$ (−2,7e-19, ruido de punto flotante; desviación estándar = 0); <strong>0 de 22.517 registros</strong> con inconsistencia mayor al 1%. Esta validación es la que permite afirmar, en las secciones 2.4 a 2.6, que los valores extremos observados son reales y no errores de captura.</p>
+<p>Se analizó también el balance de entradas y salidas del panel año a año (solo 38,0% de los NITs presentes los 8 años), dado que este no es un censo fijo de empresas sino un corte anual de “las más grandes de Colombia”: la salida de una empresa del panel puede deberse a reducción de tamaño, fusión o falta de reporte, y <strong>no equivale por sí misma a un evento de insolvencia</strong>.</p>
 </section>
 <section id="definicion-del-evento-a-predecir-y-diseno-del-modelo-predictivo">
 <h2>2.10 Definición del evento a predecir y diseño del modelo predictivo<a class="headerlink" href="#definicion-del-evento-a-predecir-y-diseno-del-modelo-predictivo" title="Link to this heading">#</a></h2>
-<p>El problema se plantea como una <strong>clasificación binaria supervisada</strong>: dado el estado financiero de una empresa en el año <em>t</em>, predecir la probabilidad de que entre en un proceso de insolvencia en el año <em>t+1</em> (problema de anticipación, no de explicación retrospectiva).</p>
+<p>El problema se plantea como una <strong>clasificación binaria supervisada</strong>: dado el estado financiero de una empresa en el año <span class="math notranslate nohighlight">\(t\)</span>, predecir la probabilidad de que entre en un proceso de insolvencia en el año <span class="math notranslate nohighlight">\(t+1\)</span>:
+$<span class="math notranslate nohighlight">\(
+y_{i,\,t+1} =
+\begin{cases}
+1 &amp; \text{si la empresa } i \text{ presenta el evento de insolvencia (proxy) en } t+1 \\
+0 &amp; \text{en caso contrario}
+\end{cases}
+\qquad
+\hat{P}(y_{i,t+1}=1 \mid X_{i,t})
+\)</span>$</p>
 <ul class="simple">
 <li><p><strong>Comprensión del negocio</strong>: se define explícitamente que un falso negativo (dejar pasar una empresa que sí entra en insolvencia) es sustancialmente más costoso que un falso positivo, dado el caso de uso (decisión de crédito, evaluación de contraparte o supervisión regulatoria). Esta asimetría de costos condiciona la elección del punto de corte de probabilidad y las métricas de evaluación.</p></li>
-<li><p><strong>Construcción del label</strong>: dado que el SIIS no reporta directamente eventos de quiebra, se define un <em>proxy</em> interno — NIT-año = 1 si la empresa presenta un corte extraordinario fuera de diciembre ese año — que se contrasta, en la medida de lo posible, contra los avisos públicos de insolvencia de la Superintendencia de Sociedades.</p></li>
-<li><p><strong>Prevención de fuga de información (<em>data leakage</em>)</strong>: el label se desplaza un año hacia atrás respecto a los <em>features</em> (variables del año <em>t</em>, label del año <em>t+1</em>).</p></li>
+<li><p><strong>Construcción del label</strong>: dado que el SIIS no reporta directamente eventos de quiebra, se define un <em>proxy</em> interno — <span class="math notranslate nohighlight">\(\text{NIT-año}=1\)</span> si la empresa presenta un corte extraordinario fuera de diciembre ese año — contrastado, en la medida de lo posible, contra los avisos públicos de insolvencia de la Superintendencia de Sociedades.</p></li>
+<li><p><strong>Prevención de fuga de información (<em>data leakage</em>)</strong>: los <em>features</em> corresponden al año <span class="math notranslate nohighlight">\(t\)</span> y el label al año <span class="math notranslate nohighlight">\(t+1\)</span>, nunca al mismo periodo.</p></li>
 <li><p><strong>Manejo del desbalance de clases</strong>: con menos del 1% de casos positivos, se evalúan, en orden creciente de complejidad, <code class="docutils literal notranslate"><span class="pre">class_weight='balanced'</span></code> (opción más simple y defendible), submuestreo de la clase mayoritaria, y SMOTE — este último señalado como riesgoso dado el número reducido de casos positivos disponibles para interpolar con sentido.</p></li>
-<li><p><strong>Modelado comparativo</strong>: regresión logística con regularización (L1/L2) como línea base interpretable, frente a métodos de ensamble (Random Forest, Gradient Boosting/XGBoost/LightGBM) que capturan no linealidades e interacciones entre ratios. La comparación se realiza mediante validación cruzada, sin adoptar el primer modelo que funcione.</p></li>
-<li><p><strong>Validación temporal (<em>walk-forward</em>)</strong>: en lugar de una partición aleatoria, se entrena con 2017-2021, se valida con 2022 y se prueba con 2023-2024, evitando que un split aleatorio filtre información del futuro hacia el pasado y sobreestime el desempeño real del modelo — decisión reforzada por la ruptura estructural de 2020 observada de forma consistente en el EDA.</p></li>
-<li><p><strong>Métricas de evaluación</strong>: <em>recall</em> y F1 sobre la clase positiva, curva Precisión-Recall (más informativa que la curva ROC bajo un desbalance de clases extremo) y matriz de confusión para justificar el punto de corte de probabilidad según el costo relativo de cada tipo de error.</p></li>
+<li><p><strong>Modelado comparativo</strong>: regresión logística con regularización (L1/L2) como línea base interpretable, frente a métodos de ensamble (Random Forest, Gradient Boosting/XGBoost/LightGBM) que capturan no linealidades e interacciones entre ratios, comparados mediante validación cruzada.</p></li>
+<li><p><strong>Validación temporal (<em>walk-forward</em>)</strong>: entrenamiento con 2017-2021, validación con 2022, prueba con 2023-2024 — evita que un <em>split</em> aleatorio filtre información del futuro hacia el pasado, decisión reforzada por la ruptura estructural de 2020 documentada en la sección 2.7.</p></li>
+<li><p><strong>Métricas de evaluación</strong>: <em>recall</em> y F1 sobre la clase positiva, curva Precisión-Recall (más informativa que la curva ROC bajo desbalance extremo) y matriz de confusión para justificar el punto de corte de probabilidad según el costo relativo de cada tipo de error.</p></li>
 <li><p><strong>Interpretabilidad</strong>: valores SHAP o los coeficientes de la regresión logística, dado que un modelo de riesgo destinado a uso bancario o regulatorio requiere poder explicar por qué se clasificó a una empresa como de riesgo alto, no solo producir un puntaje.</p></li>
 </ul>
 </section>
@@ -554,12 +671,12 @@
 <td><p>Variables ancla de nivel (EBITDA, capital de trabajo, flujo de caja libre)</p></td>
 <td><p>Numérico continuo, winsorizado 1%/99% (<code class="docutils literal notranslate"><span class="pre">_wz</span></code>)</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">roa</span></code>, <code class="docutils literal notranslate"><span class="pre">apalancamiento</span></code>, <code class="docutils literal notranslate"><span class="pre">razon_corriente</span></code>, <code class="docutils literal notranslate"><span class="pre">margen_neto</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">roa</span></code>, <code class="docutils literal notranslate"><span class="pre">apalancamiento</span></code>, <code class="docutils literal notranslate"><span class="pre">razon_corriente</span></code>, <code class="docutils literal notranslate"><span class="pre">margen_neto</span></code>, <code class="docutils literal notranslate"><span class="pre">margen_ebitda</span></code></p></td>
 <td><p>Ratios clásicos de análisis de crédito</p></td>
 <td><p>Numérico continuo (ratio)</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">escala</span></code></p></td>
-<td><p>log(Total de activos)</p></td>
+<td><p><span class="math notranslate nohighlight">\(\log(\text{Total de activos}+1)\)</span></p></td>
 <td><p>Numérico continuo</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tamano</span></code></p></td>
@@ -583,7 +700,7 @@
 <td><p>Categórico ordinal</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">error_contable_pct</span></code></p></td>
-<td><p>Chequeo de calidad: desviación de la identidad Activos = Pasivos + Patrimonio</p></td>
+<td><p>Chequeo de calidad: <span class="math notranslate nohighlight">\(\frac{\text{Activos}-(\text{Pasivos}+\text{Patrimonio})}{\text{Activos}}\times 100\)</span></p></td>
 <td><p>Numérico continuo (validación)</p></td>
 </tr>
 </tbody>
@@ -659,7 +776,11 @@
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fuente-de-datos-y-preprocesamiento">2.1 Fuente de datos y preprocesamiento</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-variables-financieras">2.2 Construcción de variables financieras</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construccion-de-variables-financieras">2.2 Construcción de variables financieras</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#variables-relativas-al-sector">Variables relativas al sector</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#escala-y-terciles-de-tamano">Escala y terciles de tamaño</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tratamiento-de-datos-faltantes">2.3 Tratamiento de datos faltantes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tratamiento-de-outliers-y-winsorizacion">2.4 Tratamiento de outliers y winsorización</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#estadistica-descriptiva-y-analisis-de-distribucion">2.5 Estadística descriptiva y análisis de distribución</a></li>
