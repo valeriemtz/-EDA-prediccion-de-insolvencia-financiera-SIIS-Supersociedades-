@@ -495,24 +495,27 @@
 </div>
 <section id="variables-relativas-al-sector">
 <h3>Variables relativas al sector<a class="headerlink" href="#variables-relativas-al-sector" title="Link to this heading">#</a></h3>
-<p>Para no penalizar a una empresa solo por operar en un sector de márgenes estructuralmente bajos, se calculó la diferencia entre el valor de cada empresa y la mediana de su sector (CIIU 2 dígitos) en el mismo año:
-$<span class="math notranslate nohighlight">\(
+<p>Para no penalizar a una empresa solo por operar en un sector de márgenes estructuralmente bajos, se calculó la diferencia entre el valor de cada empresa y la mediana de su sector (CIIU 2 dígitos) en el mismo año:</p>
+<div class="math notranslate nohighlight">
+\[
 x^{\,rel}_{i,t} = x_{i,t} - \widetilde{x}_{\,sector(i),\,t}
-\)</span><span class="math notranslate nohighlight">\(
-donde \)</span>\widetilde{x}_{,sector(i),,t}<span class="math notranslate nohighlight">\( es la mediana de la variable \)</span>x<span class="math notranslate nohighlight">\( para el sector de la empresa \)</span>i<span class="math notranslate nohighlight">\( en el año \)</span>t$. Se construyeron así <code class="docutils literal notranslate"><span class="pre">margen_ebitda_rel_sector</span></code> y <code class="docutils literal notranslate"><span class="pre">apalancamiento_rel_sector</span></code>.</p>
+\]</div>
+<p>donde <span class="math notranslate nohighlight">\(\widetilde{x}_{\,sector(i),\,t}\)</span> es la mediana de la variable <span class="math notranslate nohighlight">\(x\)</span> para el sector de la empresa <span class="math notranslate nohighlight">\(i\)</span> en el año <span class="math notranslate nohighlight">\(t\)</span>. Se construyeron así <code class="docutils literal notranslate"><span class="pre">margen_ebitda_rel_sector</span></code> y <code class="docutils literal notranslate"><span class="pre">apalancamiento_rel_sector</span></code>.</p>
 </section>
 <section id="escala-y-terciles-de-tamano">
 <h3>Escala y terciles de tamaño<a class="headerlink" href="#escala-y-terciles-de-tamano" title="Link to this heading">#</a></h3>
-<p>El tamaño empresarial sigue típicamente una distribución asimétrica (log-normal), por lo que se usa la transformación logarítmica para aproximar normalidad antes de clasificar por tamaño:
-$<span class="math notranslate nohighlight">\(
+<p>El tamaño empresarial sigue típicamente una distribución asimétrica (log-normal), por lo que se usa la transformación logarítmica para aproximar normalidad antes de clasificar por tamaño:</p>
+<div class="math notranslate nohighlight">
+\[
 \text{Escala} = \log(\text{Total de activos} + 1)
-\)</span><span class="math notranslate nohighlight">\(
-(el \)</span>+1$ evita indeterminación cuando el total de activos es 0).</p>
-<p>Sobre esta variable se aplicó <code class="docutils literal notranslate"><span class="pre">pd.qcut</span></code> para obtener terciles balanceados:
-$<span class="math notranslate nohighlight">\(
+\]</div>
+<p>(el <span class="math notranslate nohighlight">\(+1\)</span> evita indeterminación cuando el total de activos es 0).</p>
+<p>Sobre esta variable se aplicó <code class="docutils literal notranslate"><span class="pre">pd.qcut</span></code> para obtener terciles balanceados:</p>
+<div class="math notranslate nohighlight">
+\[
 n_{\text{Pequeña}} \approx n_{\text{Mediana}} \approx n_{\text{Grande}} \approx \frac{N}{3}
-\)</span>$
-En el panel: Pequeña = 7.506, Mediana = 7.505, Grande = 7.506 (N = 22.521).</p>
+\]</div>
+<p>En el panel: Pequeña = 7.506, Mediana = 7.505, Grande = 7.506 (N = 22.521).</p>
 </section>
 </section>
 <section id="tratamiento-de-datos-faltantes">
@@ -523,10 +526,11 @@ En el panel: Pequeña = 7.506, Mediana = 7.505, Grande = 7.506 (N = 22.521).</p>
 <li><p><strong>MAR</strong> (<em>Missing At Random</em>): <span class="math notranslate nohighlight">\(P(R \mid X_{obs}, X_{mis}) = P(R \mid X_{obs})\)</span></p></li>
 <li><p><strong>MNAR</strong> (<em>Missing Not At Random</em>): <span class="math notranslate nohighlight">\(P(R \mid X_{obs}, X_{mis}) \neq P(R \mid X_{obs})\)</span></p></li>
 </ul>
-<p>Porcentaje de faltantes por variable:
-$<span class="math notranslate nohighlight">\(
+<p>Porcentaje de faltantes por variable:</p>
+<div class="math notranslate nohighlight">
+\[
 \%\,\text{faltantes} = \frac{n_{\text{faltantes}}}{N} \times 100
-\)</span>$</p>
+\]</div>
 <div class="teal admonition">
 <p class="admonition-title">Resultado</p>
 <p>Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es <strong>margen neto = 7,10%</strong>, muy por encima del resto de ratios (&lt; 0,4%), clasificado como <strong>MNAR</strong>: el faltante depende de que los ingresos operacionales sean cero, el propio valor no observado (el ratio) está relacionado con la causa de su ausencia, por lo que no es ignorable estadísticamente.</p>
@@ -545,15 +549,16 @@ $<span class="math notranslate nohighlight">\(
 <p class="admonition-title">Validación de origen</p>
 <p>Antes de decidir cómo tratar estos valores se verificó su origen mediante la identidad contable (fórmula en la sección 2.9): <strong>0 de 22.517 registros</strong> mostraron una inconsistencia mayor al 1%, confirmando que los extremos no son errores de captura sino ratios distorsionados por denominadores cercanos a cero.</p>
 </div>
-<p><strong>Winsorización.</strong> Se aplicó recorte al percentil 1 y 99 sobre las variables de nivel:
-$<span class="math notranslate nohighlight">\(
+<p><strong>Winsorización.</strong> Se aplicó recorte al percentil 1 y 99 sobre las variables de nivel:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
 x_i^{\,w} =
 \begin{cases}
 Q_{0.01} &amp; \text{si } x_i &lt; Q_{0.01} \\
 x_i &amp; \text{si } Q_{0.01} \le x_i \le Q_{0.99} \\
 Q_{0.99} &amp; \text{si } x_i &gt; Q_{0.99}
 \end{cases}
-\)</span>$</p>
+\end{split}\]</div>
 <p>A diferencia de eliminar filas, la winsorización preserva el tamaño de la muestra y no desplaza las medias, confirmado empíricamente (EBITDA, capital de trabajo y FCL mantienen la misma media antes y después del recorte).</p>
 </section>
 <section id="estadistica-descriptiva-y-analisis-de-distribucion">
@@ -582,10 +587,11 @@ Q_{0.99} &amp; \text{si } x_i &gt; Q_{0.99}
 </table>
 </div>
 <p>con cuartiles obtenidos por interpolación lineal <span class="math notranslate nohighlight">\(Q_p = x_{(k)} + (n\cdot p - k)\cdot\left(x_{(k+1)}-x_{(k)}\right)\)</span>, <span class="math notranslate nohighlight">\(k=\lfloor n\cdot p\rfloor\)</span>, <span class="math notranslate nohighlight">\(p \in \{0.25,\,0.5,\,0.75\}\)</span>.</p>
-<p><strong>Asimetría (skewness de Fisher):</strong>
-$<span class="math notranslate nohighlight">\(
+<p><strong>Asimetría (skewness de Fisher):</strong></p>
+<div class="math notranslate nohighlight">
+\[
 g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{3/2}}
-\)</span>$</p>
+\]</div>
 <div class="teal admonition">
 <p class="admonition-title">Interpretación y resultado</p>
 <ul class="simple">
@@ -593,10 +599,11 @@ g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})
 <li><p>En el panel: EBITDA = 33,70 · ROA = 130,61 · apalancamiento = 149,38 · margen neto = −139,92 — asimetría fuerte generalizada, más extrema en los ratios que en las variables de nivel.</p></li>
 </ul>
 </div>
-<p><strong>Curtosis en exceso (Fisher):</strong>
-$<span class="math notranslate nohighlight">\(
+<p><strong>Curtosis en exceso (Fisher):</strong></p>
+<div class="math notranslate nohighlight">
+\[
 g_2 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^4}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{2}} - 3
-\)</span>$</p>
+\]</div>
 <div class="teal admonition">
 <p class="admonition-title">Interpretación y resultado</p>
 <ul class="simple">
@@ -604,34 +611,39 @@ g_2 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^4}{\left[\frac{1}{n}\sum (x_i-\bar{x})
 <li><p>En el panel: EBITDA = 1.902,76 · ROA = 17.890,37 · apalancamiento = 22.375,51 — colas extremadamente pesadas, coherente con la contaminación por denominadores casi nulos descrita en 2.4.</p></li>
 </ul>
 </div>
-<p><strong>Signed-log (transformación para visualización).</strong> Para representar histogramas y series sin que los outliers aplasten la escala, preservando el signo de valores negativos:
-$<span class="math notranslate nohighlight">\(
+<p><strong>Signed-log (transformación para visualización).</strong> Para representar histogramas y series sin que los outliers aplasten la escala, preservando el signo de valores negativos:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
 x' = \operatorname{sign}(x)\cdot\log(1+|x|), \qquad
 \operatorname{sign}(x)=\begin{cases}-1 &amp; x&lt;0\\ 0 &amp; x=0\\ 1 &amp; x&gt;0\end{cases}
-\)</span>$</p>
-<p><strong>ECDF (función de distribución empírica acumulada):</strong>
-$<span class="math notranslate nohighlight">\(
+\end{split}\]</div>
+<p><strong>ECDF (función de distribución empírica acumulada):</strong></p>
+<div class="math notranslate nohighlight">
+\[
 \hat{F}_n(x) = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}\{x_i \le x\}
-\)</span>$</p>
+\]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(\mathbb{1}\{\cdot\}\)</span>: función indicadora. El punto donde la ECDF cruza <span class="math notranslate nohighlight">\(x=0\)</span> corresponde directamente al porcentaje de empresas con esa variable en negativo, la lectura usada en la sección de señales de estrés financiero.</p></li>
 </ul>
 </section>
 <section id="analisis-bivariado-y-multicolinealidad">
 <h2>2.6 Análisis bivariado y multicolinealidad<a class="headerlink" href="#analisis-bivariado-y-multicolinealidad" title="Link to this heading">#</a></h2>
-<p><strong>Correlación de Pearson</strong> (relaciones lineales):
-$<span class="math notranslate nohighlight">\(
+<p><strong>Correlación de Pearson</strong> (relaciones lineales):</p>
+<div class="math notranslate nohighlight">
+\[
 r_{xy} = \frac{\sum (x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum (x_i-\bar{x})^2 \cdot \sum (y_i-\bar{y})^2}}
-\)</span>$</p>
-<p><strong>Correlación de Spearman</strong> (relaciones monótonas no necesariamente lineales):
-$<span class="math notranslate nohighlight">\(
+\]</div>
+<p><strong>Correlación de Spearman</strong> (relaciones monótonas no necesariamente lineales):</p>
+<div class="math notranslate nohighlight">
+\[
 \rho_s = 1 - \frac{6\sum d_i^2}{n(n^2-1)}
-\)</span><span class="math notranslate nohighlight">\(
-donde \)</span>d_i<span class="math notranslate nohighlight">\( es la diferencia entre los rangos de \)</span>x_i<span class="math notranslate nohighlight">\( y \)</span>y_i$.</p>
-<p><strong>Factor de Inflación de Varianza (VIF)</strong>, que mide multicolinealidad conjunta (a diferencia de la correlación, que es <em>pairwise</em>):
-$<span class="math notranslate nohighlight">\(
+\]</div>
+<p>donde <span class="math notranslate nohighlight">\(d_i\)</span> es la diferencia entre los rangos de <span class="math notranslate nohighlight">\(x_i\)</span> y <span class="math notranslate nohighlight">\(y_i\)</span>.</p>
+<p><strong>Factor de Inflación de Varianza (VIF)</strong>, que mide multicolinealidad conjunta (a diferencia de la correlación, que es <em>pairwise</em>):</p>
+<div class="math notranslate nohighlight">
+\[
 VIF_j = \frac{1}{1-R_j^2}
-\)</span>$</p>
+\]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(R_j^2\)</span>: coeficiente de determinación de la regresión de la variable <span class="math notranslate nohighlight">\(x_j\)</span> sobre el resto de variables candidatas.</p></li>
 </ul>
@@ -654,10 +666,11 @@ VIF_j = \frac{1}{1-R_j^2}
 </section>
 <section id="analisis-comparativo-por-grupos">
 <h2>2.7 Análisis comparativo por grupos<a class="headerlink" href="#analisis-comparativo-por-grupos" title="Link to this heading">#</a></h2>
-<p><strong>Prueba de Kruskal-Wallis</strong> (equivalente no paramétrico de un ANOVA de un factor, apropiado dada la asimetría de las variables):
-$<span class="math notranslate nohighlight">\(
+<p><strong>Prueba de Kruskal-Wallis</strong> (equivalente no paramétrico de un ANOVA de un factor, apropiado dada la asimetría de las variables):</p>
+<div class="math notranslate nohighlight">
+\[
 H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
-\)</span>$</p>
+\]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(N\)</span>: total de observaciones · <span class="math notranslate nohighlight">\(k\)</span>: número de grupos · <span class="math notranslate nohighlight">\(n_i\)</span>: tamaño del grupo <span class="math notranslate nohighlight">\(i\)</span> · <span class="math notranslate nohighlight">\(R_i\)</span>: suma de rangos del grupo <span class="math notranslate nohighlight">\(i\)</span></p></li>
 <li><p>Hipótesis: <span class="math notranslate nohighlight">\(H_0\)</span> — las medianas de los <span class="math notranslate nohighlight">\(k\)</span> grupos son iguales · <span class="math notranslate nohighlight">\(H_1\)</span> — al menos una mediana difiere</p></li>
@@ -674,17 +687,19 @@ H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 <section id="indicadores-compuestos-de-riesgo">
 <h2>2.8 Indicadores compuestos de riesgo<a class="headerlink" href="#indicadores-compuestos-de-riesgo" title="Link to this heading">#</a></h2>
 <p><strong>Semáforo financiero.</strong> Se clasificó cada empresa-año en tres estados <em>sano</em>, <em>alerta</em> (una señal negativa) y <em>riesgo alto</em> (dos o más señales negativas simultáneas)  y se evaluó su asociación con el periodo mediante:</p>
-<p><strong>Prueba chi-cuadrado de independencia:</strong>
-$<span class="math notranslate nohighlight">\(
+<p><strong>Prueba chi-cuadrado de independencia:</strong></p>
+<div class="math notranslate nohighlight">
+\[
 \chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}
-\)</span>$</p>
+\]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(O_{ij}\)</span>: frecuencia observada · <span class="math notranslate nohighlight">\(E_{ij}\)</span>: frecuencia esperada bajo independencia en la celda <span class="math notranslate nohighlight">\((i,j)\)</span> de la tabla de contingencia semáforo × periodo.</p></li>
 </ul>
-<p><strong>Tamaño del efecto — V de Cramér:</strong>
-$<span class="math notranslate nohighlight">\(
+<p><strong>Tamaño del efecto — V de Cramér:</strong></p>
+<div class="math notranslate nohighlight">
+\[
 V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
-\)</span>$</p>
+\]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(c\)</span>: número de filas y columnas de la tabla de contingencia.</p></li>
 </ul>
@@ -692,10 +707,11 @@ V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
 <p class="admonition-title">Resultado</p>
 <p><span class="math notranslate nohighlight">\(\chi^2\)</span> con <span class="math notranslate nohighlight">\(p = 3{,}73\times10^{-5}\)</span> (estadísticamente significativo) pero <span class="math notranslate nohighlight">\(V = 0{,}024\)</span> (efecto económicamente casi nulo). Con <span class="math notranslate nohighlight">\(N&gt;22.000\)</span> observaciones, un efecto minúsculo ya resulta “significativo”, por lo que el <span class="math notranslate nohighlight">\(p\)</span>-valor nunca debe leerse sin su tamaño de efecto.</p>
 </div>
-<p><strong>Persistencia del riesgo — matriz de transición (cadena de Markov de primer orden).</strong> La probabilidad de transición del estado <span class="math notranslate nohighlight">\(i\)</span> en el año <span class="math notranslate nohighlight">\(t\)</span> al estado <span class="math notranslate nohighlight">\(j\)</span> en el año <span class="math notranslate nohighlight">\(t+1\)</span> se estima como:
-$<span class="math notranslate nohighlight">\(
+<p><strong>Persistencia del riesgo — matriz de transición (cadena de Markov de primer orden).</strong> La probabilidad de transición del estado <span class="math notranslate nohighlight">\(i\)</span> en el año <span class="math notranslate nohighlight">\(t\)</span> al estado <span class="math notranslate nohighlight">\(j\)</span> en el año <span class="math notranslate nohighlight">\(t+1\)</span> se estima como:</p>
+<div class="math notranslate nohighlight">
+\[
 \hat{P}_{ij} = \frac{n_{ij}}{n_{i\cdot}}
-\)</span>$</p>
+\]</div>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(n_{ij}\)</span>: número de empresas que pasaron del estado <span class="math notranslate nohighlight">\(i\)</span> al estado <span class="math notranslate nohighlight">\(j\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(n_{i\cdot}=\sum_j n_{ij}\)</span>: total de empresas que estaban en el estado <span class="math notranslate nohighlight">\(i\)</span></p></li>
@@ -707,14 +723,16 @@ $<span class="math notranslate nohighlight">\(
 </section>
 <section id="validacion-de-calidad-y-estructura-del-panel">
 <h2>2.9 Validación de calidad y estructura del panel<a class="headerlink" href="#validacion-de-calidad-y-estructura-del-panel" title="Link to this heading">#</a></h2>
-<p><strong>Identidad contable fundamental</strong>, verificada como chequeo de confiabilidad del dato (independiente del análisis financiero propiamente dicho):
-$<span class="math notranslate nohighlight">\(
+<p><strong>Identidad contable fundamental</strong>, verificada como chequeo de confiabilidad del dato (independiente del análisis financiero propiamente dicho):</p>
+<div class="math notranslate nohighlight">
+\[
 \text{Activos} = \text{Pasivos} + \text{Patrimonio}
-\)</span>$</p>
-<p>Formalizada como porcentaje de error:
-$<span class="math notranslate nohighlight">\(
+\]</div>
+<p>Formalizada como porcentaje de error:</p>
+<div class="math notranslate nohighlight">
+\[
 \%\,\text{error contable} = \frac{\text{Activos} - (\text{Pasivos} + \text{Patrimonio})}{\text{Activos}} \times 100
-\)</span>$</p>
+\]</div>
 <div class="teal admonition">
 <p class="admonition-title">Resultado</p>
 <p>Error contable promedio <span class="math notranslate nohighlight">\(\approx 0\%\)</span> (−2,7e-19, ruido de punto flotante; desviación estándar = 0); <strong>0 de 22.517 registros</strong> con inconsistencia mayor al 1%. Esta validación es la que permite afirmar, en las secciones 2.4 a 2.6, que los valores extremos observados son reales y no errores de captura.</p>

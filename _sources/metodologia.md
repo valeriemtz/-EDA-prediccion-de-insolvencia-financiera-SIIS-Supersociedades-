@@ -45,23 +45,29 @@ donde $CFO$ es el flujo de efectivo de las actividades de operación (*Cash Flow
 ### Variables relativas al sector
 
 Para no penalizar a una empresa solo por operar en un sector de márgenes estructuralmente bajos, se calculó la diferencia entre el valor de cada empresa y la mediana de su sector (CIIU 2 dígitos) en el mismo año:
+
 $$
 x^{\,rel}_{i,t} = x_{i,t} - \widetilde{x}_{\,sector(i),\,t}
 $$
+
 donde $\widetilde{x}_{\,sector(i),\,t}$ es la mediana de la variable $x$ para el sector de la empresa $i$ en el año $t$. Se construyeron así `margen_ebitda_rel_sector` y `apalancamiento_rel_sector`.
 
 ### Escala y terciles de tamaño
 
 El tamaño empresarial sigue típicamente una distribución asimétrica (log-normal), por lo que se usa la transformación logarítmica para aproximar normalidad antes de clasificar por tamaño:
+
 $$
 \text{Escala} = \log(\text{Total de activos} + 1)
 $$
+
 (el $+1$ evita indeterminación cuando el total de activos es 0).
 
 Sobre esta variable se aplicó `pd.qcut` para obtener terciles balanceados:
+
 $$
 n_{\text{Pequeña}} \approx n_{\text{Mediana}} \approx n_{\text{Grande}} \approx \frac{N}{3}
 $$
+
 En el panel: Pequeña = 7.506, Mediana = 7.505, Grande = 7.506 (N = 22.521).
 
 ## 2.3 Tratamiento de datos faltantes
@@ -73,6 +79,7 @@ Se adoptó el marco formal de mecanismos de datos faltantes (Little & Rubin), do
 - **MNAR** (*Missing Not At Random*): $P(R \mid X_{obs}, X_{mis}) \neq P(R \mid X_{obs})$
 
 Porcentaje de faltantes por variable:
+
 $$
 \%\,\text{faltantes} = \frac{n_{\text{faltantes}}}{N} \times 100
 $$
@@ -99,6 +106,7 @@ Antes de decidir cómo tratar estos valores se verificó su origen mediante la i
 :::
 
 **Winsorización.** Se aplicó recorte al percentil 1 y 99 sobre las variables de nivel:
+
 $$
 x_i^{\,w} =
 \begin{cases}
@@ -124,6 +132,7 @@ A diferencia de eliminar filas, la winsorización preserva el tamaño de la mues
 con cuartiles obtenidos por interpolación lineal $Q_p = x_{(k)} + (n\cdot p - k)\cdot\left(x_{(k+1)}-x_{(k)}\right)$, $k=\lfloor n\cdot p\rfloor$, $p \in \{0.25,\,0.5,\,0.75\}$.
 
 **Asimetría (skewness de Fisher):**
+
 $$
 g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{3/2}}
 $$
@@ -135,6 +144,7 @@ $$
 :::
 
 **Curtosis en exceso (Fisher):**
+
 $$
 g_2 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^4}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{2}} - 3
 $$
@@ -146,12 +156,14 @@ $$
 :::
 
 **Signed-log (transformación para visualización).** Para representar histogramas y series sin que los outliers aplasten la escala, preservando el signo de valores negativos:
+
 $$
 x' = \operatorname{sign}(x)\cdot\log(1+|x|), \qquad
 \operatorname{sign}(x)=\begin{cases}-1 & x<0\\ 0 & x=0\\ 1 & x>0\end{cases}
 $$
 
 **ECDF (función de distribución empírica acumulada):**
+
 $$
 \hat{F}_n(x) = \frac{1}{n}\sum_{i=1}^{n} \mathbb{1}\{x_i \le x\}
 $$
@@ -161,17 +173,21 @@ $$
 ## 2.6 Análisis bivariado y multicolinealidad
 
 **Correlación de Pearson** (relaciones lineales):
+
 $$
 r_{xy} = \frac{\sum (x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum (x_i-\bar{x})^2 \cdot \sum (y_i-\bar{y})^2}}
 $$
 
 **Correlación de Spearman** (relaciones monótonas no necesariamente lineales):
+
 $$
 \rho_s = 1 - \frac{6\sum d_i^2}{n(n^2-1)}
 $$
+
 donde $d_i$ es la diferencia entre los rangos de $x_i$ y $y_i$.
 
 **Factor de Inflación de Varianza (VIF)**, que mide multicolinealidad conjunta (a diferencia de la correlación, que es *pairwise*):
+
 $$
 VIF_j = \frac{1}{1-R_j^2}
 $$
@@ -196,6 +212,7 @@ El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.00
 ## 2.7 Análisis comparativo por grupos
 
 **Prueba de Kruskal-Wallis** (equivalente no paramétrico de un ANOVA de un factor, apropiado dada la asimetría de las variables):
+
 $$
 H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 $$
@@ -216,6 +233,7 @@ Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemi
 **Semáforo financiero.** Se clasificó cada empresa-año en tres estados *sano*, *alerta* (una señal negativa) y *riesgo alto* (dos o más señales negativas simultáneas)  y se evaluó su asociación con el periodo mediante:
 
 **Prueba chi-cuadrado de independencia:**
+
 $$
 \chi^2 = \sum_{i,j}\frac{(O_{ij}-E_{ij})^2}{E_{ij}}
 $$
@@ -223,6 +241,7 @@ $$
 - $O_{ij}$: frecuencia observada · $E_{ij}$: frecuencia esperada bajo independencia en la celda $(i,j)$ de la tabla de contingencia semáforo × periodo.
 
 **Tamaño del efecto — V de Cramér:**
+
 $$
 V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
 $$
@@ -235,6 +254,7 @@ $\chi^2$ con $p = 3{,}73\times10^{-5}$ (estadísticamente significativo) pero $V
 :::
 
 **Persistencia del riesgo — matriz de transición (cadena de Markov de primer orden).** La probabilidad de transición del estado $i$ en el año $t$ al estado $j$ en el año $t+1$ se estima como:
+
 $$
 \hat{P}_{ij} = \frac{n_{ij}}{n_{i\cdot}}
 $$
@@ -250,11 +270,13 @@ Desde "Riesgo alto": $\hat{P}=44{,}9\%$ permanece en Riesgo alto, $37{,}2\%$ tra
 ## 2.9 Validación de calidad y estructura del panel
 
 **Identidad contable fundamental**, verificada como chequeo de confiabilidad del dato (independiente del análisis financiero propiamente dicho):
+
 $$
 \text{Activos} = \text{Pasivos} + \text{Patrimonio}
 $$
 
 Formalizada como porcentaje de error:
+
 $$
 \%\,\text{error contable} = \frac{\text{Activos} - (\text{Pasivos} + \text{Patrimonio})}{\text{Activos}} \times 100
 $$
