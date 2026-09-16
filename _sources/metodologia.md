@@ -78,6 +78,7 @@ $$
 $$
 
 :::{admonition} Resultado
+:class: teal
 Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es **margen neto = 7,10%**, muy por encima del resto de ratios (< 0,4%), clasificado como **MNAR**: el faltante depende de que los ingresos operacionales sean cero — el propio valor no observado (el ratio) está relacionado con la causa de su ausencia — por lo que no es ignorable estadísticamente.
 :::
 
@@ -93,6 +94,7 @@ Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas 
 Este es el criterio que sustenta la lectura de los boxplots por año y por periodo (sección 2.5): los puntos fuera de los bigotes son las empresas atípicas de cada corte.
 
 :::{admonition} Validación de origen
+:class: teal
 Antes de decidir cómo tratar estos valores se verificó su origen mediante la identidad contable (fórmula en la sección 2.9): **0 de 22.517 registros** mostraron una inconsistencia mayor al 1%, confirmando que los extremos no son errores de captura sino ratios distorsionados por denominadores cercanos a cero.
 :::
 
@@ -127,6 +129,7 @@ g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})
 $$
 
 :::{admonition} Interpretación y resultado
+:class: teal
 - $|g_1| < 0.5$: aproximadamente simétrica · $0.5 \le |g_1| < 1$: asimetría moderada · $|g_1| \ge 1$: asimetría fuerte
 - En el panel: EBITDA = 33,70 · ROA = 130,61 · apalancamiento = 149,38 · margen neto = −139,92 — asimetría fuerte generalizada, más extrema en los ratios que en las variables de nivel.
 :::
@@ -137,6 +140,7 @@ g_2 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^4}{\left[\frac{1}{n}\sum (x_i-\bar{x})
 $$
 
 :::{admonition} Interpretación y resultado
+:class: teal
 - $g_2 = 0$: mesocúrtica (igual que la normal) · $g_2 > 0$: leptocúrtica (colas más pesadas) · $g_2 < 0$: platicúrtica
 - En el panel: EBITDA = 1.902,76 · ROA = 17.890,37 · apalancamiento = 22.375,51 — colas extremadamente pesadas, coherente con la contaminación por denominadores casi nulos descrita en 2.4.
 :::
@@ -175,6 +179,7 @@ $$
 - $R_j^2$: coeficiente de determinación de la regresión de la variable $x_j$ sobre el resto de variables candidatas.
 
 :::{admonition} Interpretación del VIF
+:class: teal
 - $VIF < 5$ → sin multicolinealidad problemática
 - $5 \le VIF < 10$ → moderada
 - $VIF \ge 10$ → severa
@@ -183,6 +188,7 @@ $$
 El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4.
 
 :::{admonition} Pendientes antes de fijar el set final de variables
+:class: teal
 - Aplicar winsorización (percentil 1-99) a los cuatro ratios financieros, no solo a las variables de nivel (sección 2.4).
 - Recalcular el VIF sobre esos datos winsorizados — el valor actual (~256.000 en apalancamiento y ROA) está contaminado por outliers de denominador-casi-cero, no refleja multicolinealidad real.
 :::
@@ -200,6 +206,7 @@ $$
 Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemia — y (b) terciles de tamaño de empresa.
 
 :::{admonition} Resultados
+:class: teal
 - **Periodos**: $H = 203,\ 183,\ 52$ (según la variable) con $p \approx 0$ en los tres casos — diferencias estadísticamente significativas, aunque, dado el tamaño de muestra ($N>22.000$), el desplazamiento real en escala signed-log es modesto (se retoma en la sección 2.8).
 - **Terciles de tamaño**: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.
 :::
@@ -223,6 +230,7 @@ $$
 - $r$, $c$: número de filas y columnas de la tabla de contingencia.
 
 :::{admonition} Resultado
+:class: teal
 $\chi^2$ con $p = 3{,}73\times10^{-5}$ (estadísticamente significativo) pero $V = 0{,}024$ (efecto económicamente casi nulo). Con $N>22.000$ observaciones, un efecto minúsculo ya resulta "significativo", por lo que el $p$-valor nunca debe leerse sin su tamaño de efecto.
 :::
 
@@ -235,6 +243,7 @@ $$
 - $n_{i\cdot}=\sum_j n_{ij}$: total de empresas que estaban en el estado $i$
 
 :::{admonition} Resultado
+:class: teal
 Desde "Riesgo alto": $\hat{P}=44{,}9\%$ permanece en Riesgo alto, $37{,}2\%$ transiciona a Alerta y $17{,}9\%$ pasa directo a Sano — "Riesgo alto" no es un estado absorbente, pero sí muestra persistencia suficiente para justificar un modelo predictivo basado en historia financiera.
 :::
 
@@ -251,6 +260,7 @@ $$
 $$
 
 :::{admonition} Resultado
+:class: teal
 Error contable promedio $\approx 0\%$ (−2,7e-19, ruido de punto flotante; desviación estándar = 0); **0 de 22.517 registros** con inconsistencia mayor al 1%. Esta validación es la que permite afirmar, en las secciones 2.4 a 2.6, que los valores extremos observados son reales y no errores de captura.
 :::
 

@@ -37,7 +37,7 @@
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
-    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=f46acc73" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=59dfdcba" />
   
   <!-- So that users can add custom icons -->
   <script defer src="_static/scripts/fontawesome.js?digest=55c26ed414f5f8a31ebb"></script>
@@ -527,7 +527,7 @@ En el panel: Pequeña = 7.506, Mediana = 7.505, Grande = 7.506 (N = 22.521).</p>
 $<span class="math notranslate nohighlight">\(
 \%\,\text{faltantes} = \frac{n_{\text{faltantes}}}{N} \times 100
 \)</span>$</p>
-<div class="admonition-resultado admonition">
+<div class="teal admonition">
 <p class="admonition-title">Resultado</p>
 <p>Las variables ancla (EBITDA, capital de trabajo, FCL) resultaron casi completas (missing bajo). El caso relevante es <strong>margen neto = 7,10%</strong>, muy por encima del resto de ratios (&lt; 0,4%), clasificado como <strong>MNAR</strong>: el faltante depende de que los ingresos operacionales sean cero — el propio valor no observado (el ratio) está relacionado con la causa de su ausencia — por lo que no es ignorable estadísticamente.</p>
 </div>
@@ -541,7 +541,7 @@ $<span class="math notranslate nohighlight">\(
 <li><p><strong>Outlier extremo</strong>: <span class="math notranslate nohighlight">\(x_i &lt; Q_1 - 3 \cdot IQR\)</span> o <span class="math notranslate nohighlight">\(x_i &gt; Q_3 + 3 \cdot IQR\)</span></p></li>
 </ul>
 <p>Este es el criterio que sustenta la lectura de los boxplots por año y por periodo (sección 2.5): los puntos fuera de los bigotes son las empresas atípicas de cada corte.</p>
-<div class="admonition-validacion-de-origen admonition">
+<div class="teal admonition">
 <p class="admonition-title">Validación de origen</p>
 <p>Antes de decidir cómo tratar estos valores se verificó su origen mediante la identidad contable (fórmula en la sección 2.9): <strong>0 de 22.517 registros</strong> mostraron una inconsistencia mayor al 1%, confirmando que los extremos no son errores de captura sino ratios distorsionados por denominadores cercanos a cero.</p>
 </div>
@@ -586,7 +586,7 @@ Q_{0.99} &amp; \text{si } x_i &gt; Q_{0.99}
 $<span class="math notranslate nohighlight">\(
 g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{3/2}}
 \)</span>$</p>
-<div class="admonition-interpretacion-y-resultado admonition">
+<div class="teal admonition">
 <p class="admonition-title">Interpretación y resultado</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(|g_1| &lt; 0.5\)</span>: aproximadamente simétrica · <span class="math notranslate nohighlight">\(0.5 \le |g_1| &lt; 1\)</span>: asimetría moderada · <span class="math notranslate nohighlight">\(|g_1| \ge 1\)</span>: asimetría fuerte</p></li>
@@ -597,7 +597,7 @@ g_1 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^3}{\left[\frac{1}{n}\sum (x_i-\bar{x})
 $<span class="math notranslate nohighlight">\(
 g_2 = \frac{\frac{1}{n}\sum (x_i-\bar{x})^4}{\left[\frac{1}{n}\sum (x_i-\bar{x})^2\right]^{2}} - 3
 \)</span>$</p>
-<div class="admonition-interpretacion-y-resultado admonition">
+<div class="teal admonition">
 <p class="admonition-title">Interpretación y resultado</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(g_2 = 0\)</span>: mesocúrtica (igual que la normal) · <span class="math notranslate nohighlight">\(g_2 &gt; 0\)</span>: leptocúrtica (colas más pesadas) · <span class="math notranslate nohighlight">\(g_2 &lt; 0\)</span>: platicúrtica</p></li>
@@ -635,7 +635,7 @@ VIF_j = \frac{1}{1-R_j^2}
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(R_j^2\)</span>: coeficiente de determinación de la regresión de la variable <span class="math notranslate nohighlight">\(x_j\)</span> sobre el resto de variables candidatas.</p></li>
 </ul>
-<div class="admonition-interpretacion-del-vif admonition">
+<div class="teal admonition">
 <p class="admonition-title">Interpretación del VIF</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(VIF &lt; 5\)</span> → sin multicolinealidad problemática</p></li>
@@ -644,7 +644,7 @@ VIF_j = \frac{1}{1-R_j^2}
 </ul>
 </div>
 <p>El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.000 en apalancamiento y ROA — un resultado no interpretable como multicolinealidad real, sino como contaminación por los mismos outliers de denominador-casi-cero de la sección 2.4.</p>
-<div class="admonition-pendientes-antes-de-fijar-el-set-final-de-variables admonition">
+<div class="teal admonition">
 <p class="admonition-title">Pendientes antes de fijar el set final de variables</p>
 <ul class="simple">
 <li><p>Aplicar winsorización (percentil 1-99) a los cuatro ratios financieros, no solo a las variables de nivel (sección 2.4).</p></li>
@@ -663,7 +663,7 @@ H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 <li><p>Hipótesis: <span class="math notranslate nohighlight">\(H_0\)</span> — las medianas de los <span class="math notranslate nohighlight">\(k\)</span> grupos son iguales · <span class="math notranslate nohighlight">\(H_1\)</span> — al menos una mediana difiere</p></li>
 </ul>
 <p>Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemia — y (b) terciles de tamaño de empresa.</p>
-<div class="admonition-resultados admonition">
+<div class="teal admonition">
 <p class="admonition-title">Resultados</p>
 <ul class="simple">
 <li><p><strong>Periodos</strong>: <span class="math notranslate nohighlight">\(H = 203,\ 183,\ 52\)</span> (según la variable) con <span class="math notranslate nohighlight">\(p \approx 0\)</span> en los tres casos — diferencias estadísticamente significativas, aunque, dado el tamaño de muestra (<span class="math notranslate nohighlight">\(N&gt;22.000\)</span>), el desplazamiento real en escala signed-log es modesto (se retoma en la sección 2.8).</p></li>
@@ -688,7 +688,7 @@ V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(c\)</span>: número de filas y columnas de la tabla de contingencia.</p></li>
 </ul>
-<div class="admonition-resultado admonition">
+<div class="teal admonition">
 <p class="admonition-title">Resultado</p>
 <p><span class="math notranslate nohighlight">\(\chi^2\)</span> con <span class="math notranslate nohighlight">\(p = 3{,}73\times10^{-5}\)</span> (estadísticamente significativo) pero <span class="math notranslate nohighlight">\(V = 0{,}024\)</span> (efecto económicamente casi nulo). Con <span class="math notranslate nohighlight">\(N&gt;22.000\)</span> observaciones, un efecto minúsculo ya resulta “significativo”, por lo que el <span class="math notranslate nohighlight">\(p\)</span>-valor nunca debe leerse sin su tamaño de efecto.</p>
 </div>
@@ -700,7 +700,7 @@ $<span class="math notranslate nohighlight">\(
 <li><p><span class="math notranslate nohighlight">\(n_{ij}\)</span>: número de empresas que pasaron del estado <span class="math notranslate nohighlight">\(i\)</span> al estado <span class="math notranslate nohighlight">\(j\)</span></p></li>
 <li><p><span class="math notranslate nohighlight">\(n_{i\cdot}=\sum_j n_{ij}\)</span>: total de empresas que estaban en el estado <span class="math notranslate nohighlight">\(i\)</span></p></li>
 </ul>
-<div class="admonition-resultado admonition">
+<div class="teal admonition">
 <p class="admonition-title">Resultado</p>
 <p>Desde “Riesgo alto”: <span class="math notranslate nohighlight">\(\hat{P}=44{,}9\%\)</span> permanece en Riesgo alto, <span class="math notranslate nohighlight">\(37{,}2\%\)</span> transiciona a Alerta y <span class="math notranslate nohighlight">\(17{,}9\%\)</span> pasa directo a Sano — “Riesgo alto” no es un estado absorbente, pero sí muestra persistencia suficiente para justificar un modelo predictivo basado en historia financiera.</p>
 </div>
@@ -715,7 +715,7 @@ $<span class="math notranslate nohighlight">\(
 $<span class="math notranslate nohighlight">\(
 \%\,\text{error contable} = \frac{\text{Activos} - (\text{Pasivos} + \text{Patrimonio})}{\text{Activos}} \times 100
 \)</span>$</p>
-<div class="admonition-resultado admonition">
+<div class="teal admonition">
 <p class="admonition-title">Resultado</p>
 <p>Error contable promedio <span class="math notranslate nohighlight">\(\approx 0\%\)</span> (−2,7e-19, ruido de punto flotante; desviación estándar = 0); <strong>0 de 22.517 registros</strong> con inconsistencia mayor al 1%. Esta validación es la que permite afirmar, en las secciones 2.4 a 2.6, que los valores extremos observados son reales y no errores de captura.</p>
 </div>

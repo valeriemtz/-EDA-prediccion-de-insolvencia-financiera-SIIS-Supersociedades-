@@ -1,4 +1,12 @@
-.bd-sidebar-primary .navbar-brand img {
-  max-height: 200px;
-  width: auto;
+/* Paleta del EDA aplicada a los admonitions (:class: teal) */
+.admonition.teal {
+  border-left: 4px solid #00695C;
+  background-color: #E6F5F3;
+}
+.admonition.teal > .admonition-title {
+  background-color: #00695C;
+  color: #FFFFFF;
+}
+.admonition.teal > .admonition-title::before {
+  color: #FFFFFF;
 }
