@@ -186,6 +186,8 @@ $$
 
 donde $d_i$ es la diferencia entre los rangos de $x_i$ y $y_i$.
 
+**Correlación winsorizada (contraste de robustez).** Como comparación adicional frente a Pearson, se calcula también Pearson sobre los cuatro ratios financieros winsorizados al percentil 1/99 (misma transformación de la sección 2.4, aplicada aquí a los ratios en lugar de a las variables de nivel): si Spearman, Pearson crudo y Pearson-winsorizado coinciden en magnitud y signo, hay mayor confianza en que la relación reportada es real y no un artefacto de los outliers de denominador-casi-cero descritos en la sección 2.5.
+
 **Factor de Inflación de Varianza (VIF)**, que mide multicolinealidad conjunta (a diferencia de la correlación, que es *pairwise*):
 
 $$
@@ -207,6 +209,7 @@ El VIF calculado sobre variables sin winsorizar arrojó valores de hasta ~256.00
 :class: teal
 - Aplicar winsorización (percentil 1-99) a los cuatro ratios financieros, no solo a las variables de nivel (sección 2.4).
 - Recalcular el VIF sobre esos datos winsorizados — el valor actual (~256.000 en apalancamiento y ROA) está contaminado por outliers de denominador-casi-cero, no refleja multicolinealidad real.
+- Comparar la matriz de Spearman y la de Pearson-winsorizado contra la matriz de Pearson cruda de esta misma sección, para confirmar si la lectura de baja redundancia entre variables se sostiene una vez controlados los outliers.
 :::
 
 ## 2.7 Análisis comparativo por grupos
@@ -226,6 +229,27 @@ Se aplicó para comparar (a) periodos — pre-pandemia / pandemia / post-pandemi
 :class: teal
 - **Periodos**: $H = 203,\ 183,\ 52$ (según la variable) con $p \approx 0$ en los tres casos — diferencias estadísticamente significativas, aunque, dado el tamaño de muestra ($N>22.000$), el desplazamiento real en escala signed-log es modesto (se retoma en la sección 2.8).
 - **Terciles de tamaño**: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.
+:::
+
+**Brown-Forsythe** (variante robusta del test de Levene para homogeneidad de varianzas entre grupos, usando la mediana en lugar de la media como centro — más apropiada dada la asimetría extrema documentada en la sección 2.5):
+
+$$
+W = \frac{N-k}{k-1} \cdot \frac{\sum_{i=1}^{k} n_i (\bar{Z}_{i\cdot}-\bar{Z}_{\cdot\cdot})^2}{\sum_{i=1}^{k}\sum_{j=1}^{n_i}(Z_{ij}-\bar{Z}_{i\cdot})^2}
+$$
+
+donde $Z_{ij} = |x_{ij} - \tilde{x}_i|$ ($\tilde{x}_i$: mediana del grupo $i$), $\bar{Z}_{i\cdot}$ es la media de $Z$ dentro del grupo $i$ y $\bar{Z}_{\cdot\cdot}$ la media global. Complementa a Kruskal-Wallis: mientras esta compara medianas entre periodos, Brown-Forsythe verifica si la dispersión también difiere.
+
+**Dunn's test post-hoc** (corrección de Bonferroni). Kruskal-Wallis solo indica que *alguna* mediana difiere entre los $k$ grupos, no cuál par específico; Dunn's compara cada par de grupos a partir de la diferencia de rangos promedio:
+
+$$
+z = \frac{\bar{R}_i - \bar{R}_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\dfrac{1}{n_j}\right)}}
+$$
+
+con el nivel de significancia ajustado por el número de comparaciones ($\alpha/m$, con $m=\binom{k}{2}$ pares) para controlar la inflación del error tipo I al hacer pruebas múltiples.
+
+:::{admonition} Pendiente
+:class: teal
+Brown-Forsythe y Dunn's aún no se han ejecutado sobre el panel real (requieren los archivos fuente); se aplican sobre las mismas tres variables de nivel (EBITDA, capital de trabajo, FCL) y los mismos tres periodos usados en Kruskal-Wallis.
 :::
 
 ## 2.8 Indicadores compuestos de riesgo
@@ -294,7 +318,8 @@ El procesamiento y análisis se realizó en **Python**, utilizando principalment
 
 - `pandas` y `numpy`: manipulación, transformación y cálculo de variables.
 - `plotly.express`, `plotly.graph_objects` y `plotly.subplots`: visualizaciones interactivas (histogramas, boxplots, cascadas, mapas coropléticos, series de tiempo).
-- `scipy.stats` (`skew`, `kurtosis`, `kruskal`, `chi2_contingency`): estadística descriptiva y pruebas de hipótesis no paramétricas.
+- `scipy.stats` (`skew`, `kurtosis`, `kruskal`, `chi2_contingency`, `levene`): estadística descriptiva y pruebas de hipótesis no paramétricas.
+- `scikit-posthocs` (`posthoc_dunn`): comparaciones post-hoc por pares tras Kruskal-Wallis.
 - `statsmodels` (`variance_inflation_factor`, `proportion_confint`, `add_constant`): diagnóstico de multicolinealidad e intervalos de confianza para proporciones.
 
 ## 2.11 Variables del dataset

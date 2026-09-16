@@ -639,6 +639,7 @@ r_{xy} = \frac{\sum (x_i-\bar{x})(y_i-\bar{y})}{\sqrt{\sum (x_i-\bar{x})^2 \cdot
 \rho_s = 1 - \frac{6\sum d_i^2}{n(n^2-1)}
 \]</div>
 <p>donde <span class="math notranslate nohighlight">\(d_i\)</span> es la diferencia entre los rangos de <span class="math notranslate nohighlight">\(x_i\)</span> y <span class="math notranslate nohighlight">\(y_i\)</span>.</p>
+<p><strong>Correlación winsorizada (contraste de robustez).</strong> Como comparación adicional frente a Pearson, se calcula también Pearson sobre los cuatro ratios financieros winsorizados al percentil 1/99 (misma transformación de la sección 2.4, aplicada aquí a los ratios en lugar de a las variables de nivel): si Spearman, Pearson crudo y Pearson-winsorizado coinciden en magnitud y signo, hay mayor confianza en que la relación reportada es real y no un artefacto de los outliers de denominador-casi-cero descritos en la sección 2.5.</p>
 <p><strong>Factor de Inflación de Varianza (VIF)</strong>, que mide multicolinealidad conjunta (a diferencia de la correlación, que es <em>pairwise</em>):</p>
 <div class="math notranslate nohighlight">
 \[
@@ -661,6 +662,7 @@ VIF_j = \frac{1}{1-R_j^2}
 <ul class="simple">
 <li><p>Aplicar winsorización (percentil 1-99) a los cuatro ratios financieros, no solo a las variables de nivel (sección 2.4).</p></li>
 <li><p>Recalcular el VIF sobre esos datos winsorizados — el valor actual (~256.000 en apalancamiento y ROA) está contaminado por outliers de denominador-casi-cero, no refleja multicolinealidad real.</p></li>
+<li><p>Comparar la matriz de Spearman y la de Pearson-winsorizado contra la matriz de Pearson cruda de esta misma sección, para confirmar si la lectura de baja redundancia entre variables se sostiene una vez controlados los outliers.</p></li>
 </ul>
 </div>
 </section>
@@ -682,6 +684,22 @@ H = \left[\frac{12}{N(N+1)}\right]\sum_{i=1}^{k}\frac{R_i^2}{n_i} - 3(N+1)
 <li><p><strong>Periodos</strong>: <span class="math notranslate nohighlight">\(H = 203,\ 183,\ 52\)</span> (según la variable) con <span class="math notranslate nohighlight">\(p \approx 0\)</span> en los tres casos — diferencias estadísticamente significativas, aunque, dado el tamaño de muestra (<span class="math notranslate nohighlight">\(N&gt;22.000\)</span>), el desplazamiento real en escala signed-log es modesto (se retoma en la sección 2.8).</p></li>
 <li><p><strong>Terciles de tamaño</strong>: el % de EBITDA negativo cae de 27,1% (Pequeña) a 14,6% (Grande), mientras que el % de FCL negativo se mantiene prácticamente plano (43,0% / 44,0% / 44,4%) — el tamaño explica el riesgo de rentabilidad operativa pero no el riesgo de caja.</p></li>
 </ul>
+</div>
+<p><strong>Brown-Forsythe</strong> (variante robusta del test de Levene para homogeneidad de varianzas entre grupos, usando la mediana en lugar de la media como centro — más apropiada dada la asimetría extrema documentada en la sección 2.5):</p>
+<div class="math notranslate nohighlight">
+\[
+W = \frac{N-k}{k-1} \cdot \frac{\sum_{i=1}^{k} n_i (\bar{Z}_{i\cdot}-\bar{Z}_{\cdot\cdot})^2}{\sum_{i=1}^{k}\sum_{j=1}^{n_i}(Z_{ij}-\bar{Z}_{i\cdot})^2}
+\]</div>
+<p>donde <span class="math notranslate nohighlight">\(Z_{ij} = |x_{ij} - \tilde{x}_i|\)</span> (<span class="math notranslate nohighlight">\(\tilde{x}_i\)</span>: mediana del grupo <span class="math notranslate nohighlight">\(i\)</span>), <span class="math notranslate nohighlight">\(\bar{Z}_{i\cdot}\)</span> es la media de <span class="math notranslate nohighlight">\(Z\)</span> dentro del grupo <span class="math notranslate nohighlight">\(i\)</span> y <span class="math notranslate nohighlight">\(\bar{Z}_{\cdot\cdot}\)</span> la media global. Complementa a Kruskal-Wallis: mientras esta compara medianas entre periodos, Brown-Forsythe verifica si la dispersión también difiere.</p>
+<p><strong>Dunn’s test post-hoc</strong> (corrección de Bonferroni). Kruskal-Wallis solo indica que <em>alguna</em> mediana difiere entre los <span class="math notranslate nohighlight">\(k\)</span> grupos, no cuál par específico; Dunn’s compara cada par de grupos a partir de la diferencia de rangos promedio:</p>
+<div class="math notranslate nohighlight">
+\[
+z = \frac{\bar{R}_i - \bar{R}_j}{\sqrt{\dfrac{N(N+1)}{12}\left(\dfrac{1}{n_i}+\dfrac{1}{n_j}\right)}}
+\]</div>
+<p>con el nivel de significancia ajustado por el número de comparaciones (<span class="math notranslate nohighlight">\(\alpha/m\)</span>, con <span class="math notranslate nohighlight">\(m=\binom{k}{2}\)</span> pares) para controlar la inflación del error tipo I al hacer pruebas múltiples.</p>
+<div class="teal admonition">
+<p class="admonition-title">Pendiente</p>
+<p>Brown-Forsythe y Dunn’s aún no se han ejecutado sobre el panel real (requieren los archivos fuente); se aplican sobre las mismas tres variables de nivel (EBITDA, capital de trabajo, FCL) y los mismos tres periodos usados en Kruskal-Wallis.</p>
 </div>
 </section>
 <section id="indicadores-compuestos-de-riesgo">
@@ -745,7 +763,8 @@ V = \sqrt{\frac{\chi^2}{N \cdot \min(r-1,\ c-1)}}
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">pandas</span></code> y <code class="docutils literal notranslate"><span class="pre">numpy</span></code>: manipulación, transformación y cálculo de variables.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">plotly.express</span></code>, <code class="docutils literal notranslate"><span class="pre">plotly.graph_objects</span></code> y <code class="docutils literal notranslate"><span class="pre">plotly.subplots</span></code>: visualizaciones interactivas (histogramas, boxplots, cascadas, mapas coropléticos, series de tiempo).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">scipy.stats</span></code> (<code class="docutils literal notranslate"><span class="pre">skew</span></code>, <code class="docutils literal notranslate"><span class="pre">kurtosis</span></code>, <code class="docutils literal notranslate"><span class="pre">kruskal</span></code>, <code class="docutils literal notranslate"><span class="pre">chi2_contingency</span></code>): estadística descriptiva y pruebas de hipótesis no paramétricas.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scipy.stats</span></code> (<code class="docutils literal notranslate"><span class="pre">skew</span></code>, <code class="docutils literal notranslate"><span class="pre">kurtosis</span></code>, <code class="docutils literal notranslate"><span class="pre">kruskal</span></code>, <code class="docutils literal notranslate"><span class="pre">chi2_contingency</span></code>, <code class="docutils literal notranslate"><span class="pre">levene</span></code>): estadística descriptiva y pruebas de hipótesis no paramétricas.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scikit-posthocs</span></code> (<code class="docutils literal notranslate"><span class="pre">posthoc_dunn</span></code>): comparaciones post-hoc por pares tras Kruskal-Wallis.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">statsmodels</span></code> (<code class="docutils literal notranslate"><span class="pre">variance_inflation_factor</span></code>, <code class="docutils literal notranslate"><span class="pre">proportion_confint</span></code>, <code class="docutils literal notranslate"><span class="pre">add_constant</span></code>): diagnóstico de multicolinealidad e intervalos de confianza para proporciones.</p></li>
 </ul>
 </section>
