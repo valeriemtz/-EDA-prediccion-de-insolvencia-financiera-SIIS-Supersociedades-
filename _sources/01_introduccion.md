@@ -37,11 +37,11 @@ Predecir el riesgo de insolvencia financiera (*financial distress*) de las empre
 
 ### 1.4.2 Objetivos Específicos
 
-- **Caracterización del comportamiento histórico de los indicadores financieros:** describir la evolución de los indicadores de rentabilidad, liquidez, endeudamiento y flujo de caja libre de las empresas del panel construido a partir del SIIS de la Superintendencia de Sociedades, en el periodo 2017-2024, para construir así una perspectiva global previa al modelado.
+**Caracterización del comportamiento histórico de los indicadores financieros:** describir la evolución de los indicadores de rentabilidad, liquidez, endeudamiento y flujo de caja libre de las empresas del panel construido a partir del SIIS de la Superintendencia de Sociedades, en el periodo 2017-2024, para construir así una perspectiva global previa al modelado.
 
-- **Identificación de las diferencias sectoriales y temporales:** determinar si existen patrones sistemáticos en el comportamiento financiero entre sectores económicos (CIIU) y entre los periodos pre-pandemia, pandemia y post-pandemia, para así poder identificar las señales.
+**Identificación de las diferencias sectoriales y temporales:** determinar si existen patrones sistemáticos en el comportamiento financiero entre sectores económicos (CIIU) y entre los periodos pre-pandemia, pandemia y post-pandemia, para así poder identificar las señales.
 
-- **Implementación y comparación de modelos de machine learning:** implementar y comparar modelos de machine learning clásico (regresión logística, árboles de decisión y métodos de ensamble) para clasificar el riesgo de insolvencia financiera, evaluando su desempeño mediante métricas apropiadas para el desbalance de clases propio de este tipo de eventos.
+**Implementación y comparación de modelos de machine learning:** implementar y comparar modelos de machine learning clásico (regresión logística, árboles de decisión y métodos de ensamble) para clasificar el riesgo de insolvencia financiera, evaluando su desempeño mediante métricas apropiadas para el desbalance de clases propio de este tipo de eventos.
 
 Estos cuatro objetivos son secuenciales: los dos primeros construyen el conocimiento descriptivo del panel, el tercero traduce ese conocimiento en un conjunto reducido y justificado de variables, y el cuarto aprovecha esas variables para construir y comparar los modelos predictivos propiamente dichos.
 
