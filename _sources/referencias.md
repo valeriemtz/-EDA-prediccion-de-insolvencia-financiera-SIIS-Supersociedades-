@@ -1,4 +1,4 @@
 # Referencias
-
 ```{bibliography}
+:all:
 ```
