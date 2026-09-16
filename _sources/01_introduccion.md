@@ -23,11 +23,11 @@ Este análisis se articula en torno a la siguiente pregunta:
 
 La anterior pregunta abarca tres dimensiones fundamentales sobre la investigación:
 
-- **Dimensión histórica:** se tiene en cuenta el comportamiento de los indicadores de rentabilidad, liquidez, endeudamiento y flujo de caja libre a lo largo del tiempo (2017-2024), incluyendo su evolución antes, durante y después de la pandemia. Por esta razón, se analiza cómo han variado estos indicadores y qué papel desempeña el flujo de caja libre frente a las razones financieras tradicionales como señal temprana de deterioro.
+**Dimensión histórica:** se tiene en cuenta el comportamiento de los indicadores de rentabilidad, liquidez, endeudamiento y flujo de caja libre a lo largo del tiempo (2017-2024), incluyendo su evolución antes, durante y después de la pandemia. Por esta razón, se analiza cómo han variado estos indicadores y qué papel desempeña el flujo de caja libre frente a las razones financieras tradicionales como señal temprana de deterioro.
 
-- **Dimensión sectorial:** es necesario identificar si el comportamiento financiero tiene un impacto distinto o si varía de acuerdo al sector económico (CIIU) de cada empresa, dado que un mismo nivel de endeudamiento o liquidez puede ser señal de alerta en un sector y comportamiento normal en otro. Por ello se analiza si existen diferencias sectoriales relevantes que deban considerarse al construir el modelo predictivo, en lugar de tratar a todas las empresas como comparables entre sí sin importar su industria.
+**Dimensión sectorial:** es necesario identificar si el comportamiento financiero tiene un impacto distinto o si varía de acuerdo al sector económico (CIIU) de cada empresa, dado que un mismo nivel de endeudamiento o liquidez puede ser señal de alerta en un sector y comportamiento normal en otro. Por ello se analiza si existen diferencias sectoriales relevantes que deban considerarse al construir el modelo predictivo, en lugar de tratar a todas las empresas como comparables entre sí sin importar su industria.
 
-- **Dimensión metodológica:** para poder anticipar el riesgo de insolvencia es esencial definir operativamente el evento a predecir, dado que el SIIS no reporta directamente eventos de quiebra, identificar los indicadores con mayor poder predictivo mediante análisis de correlación y selección de variables, y abordar explícitamente el desbalance de clases propio de este tipo de eventos al evaluar los modelos, ya que las empresas en insolvencia representan una minoría dentro del panel.
+**Dimensión metodológica:** para poder anticipar el riesgo de insolvencia es esencial definir operativamente el evento a predecir, dado que el SIIS no reporta directamente eventos de quiebra, identificar los indicadores con mayor poder predictivo mediante análisis de correlación y selección de variables, y abordar explícitamente el desbalance de clases propio de este tipo de eventos al evaluar los modelos, ya que las empresas en insolvencia representan una minoría dentro del panel.
 
 ## 1.4 Objetivos del Estudio
 
@@ -37,11 +37,11 @@ Predecir el riesgo de insolvencia financiera (*financial distress*) de las empre
 
 ### 1.4.2 Objetivos Específicos
 
-**Caracterización del comportamiento histórico de los indicadores financieros:** describir la evolución de los indicadores de rentabilidad, liquidez, endeudamiento y flujo de caja libre de las empresas del panel construido a partir del SIIS de la Superintendencia de Sociedades, en el periodo 2017-2024, para construir así una perspectiva global previa al modelado.
+- **Caracterización del comportamiento histórico de los indicadores financieros:** describir la evolución de los indicadores de rentabilidad, liquidez, endeudamiento y flujo de caja libre de las empresas del panel construido a partir del SIIS de la Superintendencia de Sociedades, en el periodo 2017-2024, para construir así una perspectiva global previa al modelado.
 
-**Identificación de las diferencias sectoriales y temporales:** determinar si existen patrones sistemáticos en el comportamiento financiero entre sectores económicos (CIIU) y entre los periodos pre-pandemia, pandemia y post-pandemia, para así poder identificar las señales.
+- **Identificación de las diferencias sectoriales y temporales:** determinar si existen patrones sistemáticos en el comportamiento financiero entre sectores económicos (CIIU) y entre los periodos pre-pandemia, pandemia y post-pandemia, para así poder identificar las señales.
 
-**Implementación y comparación de modelos de machine learning:** implementar y comparar modelos de machine learning clásico (regresión logística, árboles de decisión y métodos de ensamble) para clasificar el riesgo de insolvencia financiera, evaluando su desempeño mediante métricas apropiadas para el desbalance de clases propio de este tipo de eventos.
+- **Implementación y comparación de modelos de machine learning:** implementar y comparar modelos de machine learning clásico (regresión logística, árboles de decisión y métodos de ensamble) para clasificar el riesgo de insolvencia financiera, evaluando su desempeño mediante métricas apropiadas para el desbalance de clases propio de este tipo de eventos.
 
 Estos cuatro objetivos son secuenciales: los dos primeros construyen el conocimiento descriptivo del panel, el tercero traduce ese conocimiento en un conjunto reducido y justificado de variables, y el cuarto aprovecha esas variables para construir y comparar los modelos predictivos propiamente dichos.
 
