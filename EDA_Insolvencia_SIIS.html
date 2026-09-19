@@ -5775,7 +5775,7 @@ if (outputEl) {{
 </div></blockquote>
 <section id="empresas-de-mayor-riesgo-por-etapa-el-espejo-del-ranking-anterior">
 <h3>23.1 Empresas de mayor riesgo por etapa (el espejo del ranking anterior)<a class="headerlink" href="#empresas-de-mayor-riesgo-por-etapa-el-espejo-del-ranking-anterior" title="Link to this heading">#</a></h3>
-<p><strong>Tipo de análisis:</strong> el mismo ranking y la misma comparación de grupos de la sección 23, pero en el extremo opuesto del score compuesto — las empresas con peor combinación de ROA, margen EBITDA y consistencia de FCL en cada etapa. Para un proyecto centrado en <em>predecir insolvencia</em>, este extremo es al menos tan relevante como el de las destacadas: es el perfil que el modelo eventualmente deberá aprender a distinguir.</p>
+<p><strong>Tipo de análisis:</strong> el mismo ranking y la misma comparación de grupos de la sección 23, pero en el extremo opuesto del score compuesto, las empresas con peor combinación de ROA, margen EBITDA y consistencia de FCL en cada etapa. Para un proyecto centrado en <em>predecir insolvencia</em>, este extremo es al menos tan relevante como el de las destacadas: es el perfil que el modelo eventualmente deberá aprender a distinguir.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bottom10_por_periodo</span> <span class="o">=</span> <span class="p">(</span>
@@ -6327,7 +6327,7 @@ if (outputEl) {{
 </table>
 </div></div>
 </div>
-<p><strong>Cómo leerlo:</strong> igual que en la sección 23, compara los nombres entre las tres tablas — empresas que se repiten en el “bottom” de las tres etapas muestran un patrón de riesgo estructural, no un mal año aislado.</p>
+<p><strong>Cómo leerlo:</strong> igual que en la sección 23, compara los nombres entre las tres tablas, empresas que se repiten en el “bottom” de las tres etapas muestran un patrón de riesgo estructural, no un mal año aislado.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">bottom_unico</span> <span class="o">=</span> <span class="n">bottom10_por_periodo</span><span class="p">[</span><span class="s1">'NIT'</span><span class="p">]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
@@ -6485,7 +6485,7 @@ if (outputEl) {{
 </table>
 </div></div>
 </div>
-<p><strong>Cómo leerlo:</strong> si el apalancamiento mediano del grupo de mayor riesgo es claramente más alto que el de las destacadas (y que el panel completo), confirma —desde el extremo opuesto— el mismo patrón encontrado en la sección 23: depender más de deuda se asocia con peor desempeño relativo. Si además hay sectores sobrerrepresentados aquí, es una señal a considerar junto con el sector al construir el modelo (por ejemplo, normalizando variables respecto a la mediana del sector, como ya se hizo en la sección 16.1).</p>
+<p><strong>Cómo leerlo:</strong> si el apalancamiento mediano del grupo de mayor riesgo es claramente más alto que el de las destacadas (y que el panel completo), confirma desde el extremo opuesto el mismo patrón encontrado en la sección 23: depender más de deuda se asocia con peor desempeño relativo. Si además hay sectores sobrerrepresentados aquí, es una señal a considerar junto con el sector al construir el modelo (por ejemplo, normalizando variables respecto a la mediana del sector, como ya se hizo en la sección 16.1).</p>
 </section>
 </section>
 <section id="resumen-ejecutivo">
@@ -6505,11 +6505,11 @@ if (outputEl) {{
 <h2>Síntesis para la siguiente etapa (interpretación cruzada con la metodología)<a class="headerlink" href="#sintesis-para-la-siguiente-etapa-interpretacion-cruzada-con-la-metodologia" title="Link to this heading">#</a></h2>
 <ol class="arabic simple">
 <li><p><strong>Winsorizar antes de todo lo demás.</strong> Los ratios (ROA, apalancamiento, razón corriente, margen neto) tienen outliers de denominador-casi-cero que contaminan estadística descriptiva, VIF y hasta el histograma sector-relativo. Ya resuelto en 10.1 para las variables de nivel; falta aplicar el mismo criterio a los 4 ratios antes de VIF y modelado.</p></li>
-<li><p><strong>Recalcular VIF sobre datos winsorizados</strong> — el resultado actual (VIF &gt; 250,000) no sirve para decidir qué variables descartar.</p></li>
+<li><p><strong>Recalcular VIF sobre datos winsorizados</strong> el resultado actual (VIF &gt; 250,000) no sirve para decidir qué variables descartar.</p></li>
 <li><p><strong>FCL es la variable de mayor riesgo estructural</strong>, no EBITDA: ~44% negativo de forma persistente, transversal a todos los tamaños de empresa. El “tamaño” predice bien el riesgo de EBITDA pero no el de caja.</p></li>
-<li><p><strong>Usar delta interanual / persistencia, no solo nivel</strong> — la matriz de transición muestra que “Riesgo alto” es un estado con alta rotación (&gt;55% sale en un año), coherente con la recomendación de la metodología de mirar la trayectoria y no solo la foto de un año.</p></li>
-<li><p><strong>Cuidado con conteos chicos</strong> al leer el mapa por departamento (Sucre 100%) y sectores con pocas empresas (CIIU R9, n=20) — cualquier porcentaje ahí necesita ir acompañado de su n.</p></li>
-<li><p><strong>Salida del panel ≠ insolvencia</strong> — para el label real hay que usar el proxy de corte extraordinario que define la metodología, no la desaparición de la muestra de empresas más grandes.</p></li>
+<li><p><strong>Usar delta interanual / persistencia, no solo nivel</strong> la matriz de transición muestra que “Riesgo alto” es un estado con alta rotación (&gt;55% sale en un año), coherente con la recomendación de la metodología de mirar la trayectoria y no solo la foto de un año.</p></li>
+<li><p><strong>Cuidado con conteos chicos</strong> al leer el mapa por departamento (Sucre 100%) y sectores con pocas empresas (CIIU R9, n=20) cualquier porcentaje ahí necesita ir acompañado de su n.</p></li>
+<li><p><strong>Salida del panel ≠ insolvencia</strong> para el label real hay que usar el proxy de corte extraordinario que define la metodología, no la desaparición de la muestra de empresas más grandes.</p></li>
 </ol>
 </section>
 </section>
